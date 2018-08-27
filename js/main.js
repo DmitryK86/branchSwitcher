@@ -29,7 +29,7 @@ function updateCurrent() {
     var projectName = getSelectedProjectName();
     $.when(sendRequest({'action': 'updateCurrent', 'project-name': projectName})).then(function (response) {
         var result = checkResponse(response);
-        $('.branch-status').find('input').attr('disabled', true);
+        disableInputs('branch-status');
         $('.update-result').fadeIn(500).html(result);
     });
 }
@@ -38,6 +38,7 @@ function checkAvailable() {
     var projectName = getSelectedProjectName();
     $.when(sendRequest({'action': 'checkAvailable', 'project-name': projectName})).then(function (response) {
         var result = checkResponse(response);
+        disableInputs('branch-status');
         appendOptions(result, 'branches');
         $('.check-result').fadeIn(500);
     });
@@ -52,6 +53,7 @@ function checkoutBranch() {
     else {
         $.when(sendRequest({'action': 'checkoutBranch', 'project-name': projectName, 'branch-name': selectedBranch})).then(function (response) {
             var result = checkResponse(response);
+            disableInputs('check-result');
             $('.checked-info').fadeIn(500).html(result);
         });
     }
@@ -92,4 +94,8 @@ function getSelectedProjectName() {
     }
 
     return name;
+}
+
+function disableInputs(divWithInputsClass) {
+    $('.' + divWithInputsClass).find('input').attr('disabled', true);
 }
