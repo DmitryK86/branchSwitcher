@@ -55,12 +55,12 @@ class Switcher {
         if (!$result){
             $this->sendResponse(self::STATUS_ERROR, "Не удалось выполнить команду git ({$command})");
         }
-
+        $this->applyMigrations($path);
         return $result;
     }
 
-    private function applyMigrations() {
-
+    private function applyMigrations($path) {
+        shell_exec('cd ' . $path .'; php yiic migrate --interactive=0');
     }
 
     private function sendResponse($status, $data){
