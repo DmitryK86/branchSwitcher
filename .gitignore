@@ -1,3 +1,4 @@
 .idea/
 www/config.php
 www/test.php
+logs/

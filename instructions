@@ -1,0 +1,5 @@
+Add next into file /etc/sudoers
+www-data ALL=(username) NOPASSWD: /usr/bin/git
+where "username" - ubuntu account, which has access to git actions (e.g. pull or checkout)
+
+create folder "logs" and set access 777 (chmod 777 logs/)

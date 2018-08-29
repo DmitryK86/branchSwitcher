@@ -1,4 +1,7 @@
 <?php
+/**
+ * Class Switcher
+ */
 
 class Switcher {
     const STATUS_OK = 'ok';
@@ -6,9 +9,10 @@ class Switcher {
     const REMOTES = 'remotes/origin/';
 
     protected $config = null;
+    protected $logger;
 
     public function __construct(){
-        $this->config = require ('config.php');
+        $this->config = require ('config.php');;
     }
 
     public function init(){
@@ -27,7 +31,7 @@ class Switcher {
     }
 
     public function updateCurrent($projectName){
-        $message = $this->applyCommand($projectName, ' git pull', true);
+        $message = $this->applyCommand($projectName, ' git pull', true, true);
         $this->sendResponse(self::STATUS_OK, $message);
     }
 
@@ -41,11 +45,12 @@ class Switcher {
     }
 
     public function checkoutBranch($projectName, $branchName){
-        $message = $this->applyCommand($projectName, ' git checkout'. $branchName, true);
+        $message = $this->applyCommand($projectName, ' git checkout'. $branchName, true, true);
+        $this->getLogger()->log("Проект: {$projectName} / Действие: {$message}");
         $this->sendResponse(self::STATUS_OK, $message);
     }
 
-    private function applyCommand($name, $command, $sudoNeed = false){
+    private function applyCommand($name, $command, $sudoNeed = false, $applyMigrations = false){
         $path = $this->config['projects'][$name]['path'];
         if ($sudoNeed){
             $command = $this->getSudo() . $command;
@@ -53,9 +58,14 @@ class Switcher {
 
         $result = shell_exec('cd ' . $path . '; ' . $command);
         if (!$result){
-            $this->sendResponse(self::STATUS_ERROR, "Не удалось выполнить команду git ({$command})");
+            $message = "Не удалось выполнить команду git ({$command})";
+            $this->getLogger()->log("Ошибка! Проект: {$name} / Действие: {$message}");
+            $this->sendResponse(self::STATUS_ERROR, $message);
         }
-        $this->applyMigrations($path);
+        if ($applyMigrations){
+            $this->applyMigrations($path);
+        }
+
         return $result;
     }
 
@@ -70,6 +80,14 @@ class Switcher {
 
     private function getSudo(){
         return 'sudo -u ' . $this->config['username'];
+    }
+
+    private function getLogger(){
+        if (!$this->logger){
+            $this->logger = new Logger();
+        }
+
+        return $this->logger;
     }
 
 }

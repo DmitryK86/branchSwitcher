@@ -60,6 +60,7 @@ function checkoutBranch() {
 }
 
 function sendRequest(data) {
+    showPopup(true);
     return $.ajax({
         url: "/www/index.php",
         method: "POST",
@@ -67,6 +68,9 @@ function sendRequest(data) {
         data: data,
         error: function () {
             alert('Ошибка сервера. Попробуй позже');
+        },
+        complete: function () {
+            showPopup(false);
         }
     });
 }
@@ -98,4 +102,9 @@ function getSelectedProjectName() {
 
 function disableInputs(divWithInputsClass) {
     $('.' + divWithInputsClass).find('input').attr('disabled', true);
+}
+
+function showPopup(load) {
+    var popup = $('.popup-loader');
+    load ? popup.fadeIn(300) : popup.fadeOut(300);
 }
