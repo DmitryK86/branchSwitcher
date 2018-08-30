@@ -46,7 +46,7 @@ class Switcher {
 
     public function checkoutBranch($projectName, $branchName){
         $message = $this->applyCommand($projectName, ' git checkout'. $branchName, true, true);
-        $this->getLogger()->log("Проект: {$projectName} / Действие: {$message}");
+        $this->getLogger()->log("Switched branch {$branchName} on {$projectName}");
         $this->sendResponse(self::STATUS_OK, $message);
     }
 
@@ -59,7 +59,7 @@ class Switcher {
         $result = shell_exec('cd ' . $path . '; ' . $command);
         if (!$result){
             $message = "Не удалось выполнить команду git ({$command})";
-            $this->getLogger()->log("Ошибка! Проект: {$name} / Действие: {$message}");
+            $this->getLogger()->log("Error! {$name} / Details: {$message}");
             $this->sendResponse(self::STATUS_ERROR, $message);
         }
         if ($applyMigrations){
