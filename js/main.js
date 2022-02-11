@@ -3,7 +3,7 @@ $(document).ready(function () {
 });
 
 function init() {
-    $.when(sendRequest({'action': 'init'})).then(function (response) {
+    $.when(sendRequest({'action': 'getProjects'})).then(function (response) {
         var projects = checkResponse(response);
         if (typeof projects !== 'undefined'){
             appendOptions(projects, 'projects');
@@ -51,7 +51,7 @@ function checkoutBranch() {
         alert('Выбери ветку!');
     }
     else {
-        $.when(sendRequest({'action': 'checkoutBranch', 'project-name': projectName, 'branch-name': selectedBranch})).then(function (response) {
+        $.when(sendRequest({'action': 'deploy', 'project-name': projectName, 'branch-name': selectedBranch})).then(function (response) {
             var result = checkResponse(response);
             disableInputs('check-result');
             $('.checked-info').fadeIn(500).html(result);

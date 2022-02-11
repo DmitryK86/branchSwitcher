@@ -3,7 +3,11 @@
 // name - Project name, alias - сокращенное название, path - путь к папке с проектом
 return [
     'username' => '',
-    'projects' => [
-        'name' => ['alias' => '', 'path' => ''],
+    'data' => [
+        'adminId' => [
+            'projects' => [
+                'name' => ['alias' => '', 'path' => ''],
+            ],
+        ],
     ],
 ];
