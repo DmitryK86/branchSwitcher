@@ -1,16 +1,3 @@
-$(document).ready(function () {
-    init();
-});
-
-function init() {
-    $.when(sendRequest({'action': 'getProjects'})).then(function (response) {
-        var projects = checkResponse(response);
-        if (typeof projects !== 'undefined'){
-            appendOptions(projects, 'projects');
-        }
-    });
-}
-
 function checkBranch(projectName) {
     if (projectName === '0') {
         alert('Выбери проект!');
@@ -34,21 +21,22 @@ function updateCurrent() {
     });
 }
 
+let allowedBranches;
 function checkAvailable() {
     var projectName = getSelectedProjectName();
     $.when(sendRequest({'action': 'checkAvailable', 'project-name': projectName})).then(function (response) {
-        var result = checkResponse(response);
+        allowedBranches = checkResponse(response);
         disableInputs('branch-status');
-        appendOptions(result, 'branches');
+        appendOptions(allowedBranches, 'branches');
         $('.check-result').fadeIn(500);
     });
 }
 
 function checkoutBranch() {
     var projectName = getSelectedProjectName();
-    var selectedBranch = $('#branches option:selected').val();
-    if (selectedBranch === '0'){
-        alert('Выбери ветку!');
+    var selectedBranch = $('#selected-branch').val();
+    if (allowedBranches.includes(selectedBranch) === false){
+        alert('Ветка указана не верно');
     }
     else {
         $.when(sendRequest({'action': 'deploy', 'project-name': projectName, 'branch-name': selectedBranch})).then(function (response) {
@@ -62,11 +50,11 @@ function checkoutBranch() {
 function sendRequest(data) {
     showPopup(true);
     return $.ajax({
-        url: "/www/index.php",
+        url: "/",
         method: "POST",
         dataType: "json",
         data: data,
-        error: function () {
+        error: function (res) {
             alert('Ошибка сервера. Попробуй позже');
         },
         complete: function () {
@@ -87,7 +75,7 @@ function checkResponse(response) {
 
 function appendOptions(optionsData, selectId) {
     for (var i = 0; i < optionsData.length; i++) {
-        $('#'+selectId).append('<option value="'+optionsData[i]+'" >'+optionsData[i]+'</option>');
+        $('#'+selectId).append('<option value="'+optionsData[i]+'" >');
     }
 }
 

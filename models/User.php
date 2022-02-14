@@ -20,6 +20,7 @@ use yii\web\IdentityInterface;
  * @property int $status
  * @property int $created_at
  * @property int $updated_at
+ * @property string $alias
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -28,6 +29,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     const ROLE_ROOT = 'root';
     const ROLE_USER = 'user';
+
+    public $password;
 
     public function getStatusName()
     {
@@ -39,6 +42,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             self::STATUS_BLOCKED => 'Заблокирован',
             self::STATUS_ACTIVE => 'Активен',
+        ];
+    }
+
+    public static function getRolesArray(): array
+    {
+        return [
+            self::ROLE_ROOT => 'Root',
+            self::ROLE_USER => 'User',
         ];
     }
 
@@ -56,7 +67,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['role', 'username', 'password_hash'], 'required'],
+            [['role', 'username', 'password_hash', 'password'], 'required'],
             [['created_at', 'updated_at'], 'default', 'value' => null],
             [['created_at', 'updated_at'], 'integer'],
             [['username', 'password_hash', 'email'], 'string', 'max' => 255],
@@ -64,11 +75,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['email'], 'unique'],
             [['username'], 'unique'],
 
+            [['password'], 'string', 'max' => 32, 'min' => 6],
+
             ['status', 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::getStatusesArray())],
 
-            ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_ROOT]],
+            ['role', 'in', 'range' => array_keys(self::getRolesArray())],
+
+            ['alias', 'required'],
+            ['alias', 'string', 'max' => 255]
         ];
     }
 
@@ -87,6 +103,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'alias' => 'Alias',
         ];
     }
 
@@ -160,6 +177,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
+    public function beforeValidate()
+    {
+        $this->setPassword($this->password);
+        return parent::beforeValidate();
+    }
+
+
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
@@ -169,5 +193,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             return true;
         }
         return false;
+    }
+
+    public function isRoot(): bool
+    {
+        return $this->role == self::ROLE_ROOT;
     }
 }

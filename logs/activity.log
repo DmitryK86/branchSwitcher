@@ -1,8 +1,0 @@
-[n/a][19:49:57 10-02-2022] make next:
-Command: ssh dev@157.90.211.146 /var/www/back4/king/update.sh   master
-[n/a][19:49:57 10-02-2022] make next:
-Switched branch   master on king. code: 255
-[n/a][19:53:11 10-02-2022] make next:
-Command: ssh dev@157.90.211.146 /var/www/back4/king/update.sh   master
-[n/a][19:53:11 10-02-2022] make next:
-Switched branch   master on king. code: 255

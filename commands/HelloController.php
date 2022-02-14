@@ -33,11 +33,12 @@ class HelloController extends Controller
         return ExitCode::OK;
     }
 
-    public function actionCreateRootUser($username, $password)
+    public function actionCreateRootUser($username, $password, $alias)
     {
         $user = new User();
         $user->username = $username;
-        $user->setPassword($password);
+        $user->password = $password;
+        $user->alias = $alias;
         $user->role = User::ROLE_ROOT;
 
         if (!$user->save()){
@@ -45,6 +46,6 @@ class HelloController extends Controller
             exit(1);
         }
 
-        echo "Done!";
+        echo "Done!" . PHP_EOL;
     }
 }
