@@ -3,9 +3,20 @@ For correct use of this project need to create special config for php and includ
 1. Go to /etc/php/{version}/fpm/pool.d/ and copy www.conf to user.conf
 2. In user.conf wrote next
 [user]
+user =
+[user]
 user = {username} # under this user we make operations on the server
-group = dmitry
-listen = /run/php/php7.4-user.sock #custom name for nginx
+group = {username}
+listen = /run/php/php7.4-user.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+chdir = /
+
 3. In /etc/php/{version}/fpm/php.ini set max_execution_time = 120
 
 4. In n/etc/nginx/ginx.conf set fastcgi_read_timeout 120;
