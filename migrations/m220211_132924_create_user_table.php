@@ -25,7 +25,7 @@ class m220211_132924_create_user_table extends Migration
         ]);
 
         $this->createIndex('idx-user-username', '{{%user}}', 'username', true);
-        $this->createIndex('idx-user-email', '{{%user}}', 'email', true);
+        $this->execute('create unique index "uidx-user-email" on "user" (email) where email is not null');
     }
 
     /**
