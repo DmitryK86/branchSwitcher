@@ -80,8 +80,6 @@ class UserController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            trace($model->getErrors());
         }
 
         return $this->render('create', [
