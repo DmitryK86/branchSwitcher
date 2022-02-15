@@ -69,9 +69,8 @@ class Switcher
         }
         if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
             $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
-            $message = shell_exec(
-                "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}"
-            );
+            $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
+            $message = shell_exec($command);
         } else {
             $command = "ssh dev@{$ip} /var/www/{$this->stageId}/{$this->projectName}/update.sh {$this->branch}";
             $message = shell_exec($command);
@@ -81,6 +80,7 @@ class Switcher
             $message = implode('<br>', array_filter(explode("\n", $message)));
         }
 
+        $this->logger->log("Command: {$command}.");
         $this->logger->log("Switched branch {$this->branch} on {$this->projectName}.");
         $this->sendResponse(self::STATUS_OK, $message);
     }
