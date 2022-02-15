@@ -6,6 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'name' => 'Branch Switcher',
     'id' => 'basic',
+    'timeZone' => 'Europe/Berlin',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
