@@ -47,8 +47,13 @@ class Switcher
 
     public function updateCurrent()
     {
-        $message = $this->applyCommand(' git pull');
-        $this->sendResponse(self::STATUS_OK, implode('<br>', $message));
+        $message = $this->applyCommand(' git status');
+        $this->branch = str_replace('On branch ', '', $message[0]??'');
+        if (!$this->branch){
+            $this->sendResponse(self::STATUS_ERROR, "Ошибка при определении текущей ветки");
+        }
+
+        $this->deploy();
     }
 
     public function checkAvailable()

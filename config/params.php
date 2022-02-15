@@ -6,4 +6,5 @@ return [
     'senderName' => 'Example.com mailer',
     'projects' => [],
     'ip' => '',
+    'stageDomain' => '',
 ];
