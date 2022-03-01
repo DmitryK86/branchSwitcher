@@ -24,6 +24,8 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    const SCENARIO_UPDATE = 'update';
+
     const STATUS_BLOCKED = 0;
     const STATUS_ACTIVE = 1;
 
@@ -31,6 +33,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     const ROLE_USER = 'user';
 
     public $password;
+    public $password_repeat;
 
     public function getStatusName()
     {
@@ -67,7 +70,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['role', 'username', 'password_hash', 'password'], 'required'],
+            [['role', 'username', 'password_hash'], 'required'],
             [['created_at', 'updated_at'], 'default', 'value' => null],
             [['created_at', 'updated_at'], 'integer'],
             [['username', 'password_hash', 'email'], 'string', 'max' => 255],
@@ -78,7 +81,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
             [['username'], 'unique'],
 
-            [['password'], 'string', 'max' => 32, 'min' => 6],
+            [['password', 'password_repeat'], 'required', 'except' => self::SCENARIO_UPDATE],
+            [['password', 'password_repeat'], 'string', 'max' => 32, 'min' => 6],
+            ['password', 'compare', 'compareAttribute' => 'password_repeat'],
 
             ['status', 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
