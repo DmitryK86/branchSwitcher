@@ -40,6 +40,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Users', 'url' => ['/user/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot()],
+            ['label' => 'Log', 'url' => ['/switch-log/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot()],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
