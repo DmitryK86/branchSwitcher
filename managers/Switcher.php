@@ -2,6 +2,7 @@
 
 namespace app\managers;
 
+use app\dto\SwitchLogDto;
 use app\models\User;
 
 /**
@@ -18,9 +19,11 @@ class Switcher
     protected Logger $logger;
     protected ?string $projectName;
     protected ?string $branch;
+    protected User $user;
 
     public function __construct(User $user, $projectName = null, $branch = null)
     {
+        $this->user = $user;
         $this->stageId = $user->alias;
         $this->logger = new Logger();
         $this->projectName = str_replace(' ', '', $projectName);
@@ -40,8 +43,8 @@ class Switcher
 
     public function checkBranch()
     {
-        $message = $this->applyCommand(' git fetch; git status');
-        $message = implode("<br>", array_splice($message, 0, 2));
+        $currentBranchData = $this->getCurrentBranchData();
+        $message = implode("<br>", array_splice($currentBranchData, 0, 2));
         $this->sendResponse(self::STATUS_OK, $message);
     }
 
@@ -72,22 +75,27 @@ class Switcher
         if (!$ip){
             throw new \Exception("IP not defined for back-deploy");
         }
-        if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
-            $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
-            $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
-            $message = shell_exec($command);
-        } else {
-            $command = "ssh dev@{$ip} /var/www/{$this->stageId}/{$this->projectName}/update.sh {$this->branch}";
-            $message = shell_exec($command);
-        }
+//        if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
+//            $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
+//            $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
+//            $message = shell_exec($command);
+//        } else {
+//            $command = "ssh dev@{$ip} /var/www/{$this->stageId}/{$this->projectName}/update.sh {$this->branch}";
+//            $message = shell_exec($command);
+//        }
+//
+//        if (!is_array($message)){
+//            $message = implode('<br>', array_filter(explode("\n", $message)));
+//        }
 
-        if (!is_array($message)){
-            $message = implode('<br>', array_filter(explode("\n", $message)));
-        }
+        $dto = new SwitchLogDto();
+        $dto->user = $this->user;
+        $dto->alias = $this->projectName;
+        $dto->to = $this->branch;
+        $dto->from = str_replace('On branch ', '', $this->getCurrentBranchData()[0] ?? '');
+        $this->logger->logSwitch($dto);
 
-        $this->logger->log("Command: {$command}.");
-        $this->logger->log("Switched branch {$this->branch} on {$this->projectName}.");
-        $this->sendResponse(self::STATUS_OK, $message);
+        $this->sendResponse(self::STATUS_OK, 'OK');
     }
 
     private function applyCommand($command)
@@ -102,7 +110,7 @@ class Switcher
         $result = exec("cd {$path} && $command", $out, $code);
         if ($result === false) {
             $message = "Не удалось выполнить команду git ({$command}, code: {$code})";
-            $this->logger->log("Error! {$this->projectName} / Details: {$message}");
+            $this->logger->logSwitch("Error! {$this->projectName} / Details: {$message}");
             $this->sendResponse(self::STATUS_ERROR, $message);
         }
 
@@ -113,6 +121,11 @@ class Switcher
     {
         echo json_encode(['status' => $status, 'data' => $data]);
         exit(0);
+    }
+
+    private function getCurrentBranchData(): array
+    {
+        return $this->applyCommand(' git fetch; git status');
     }
 }
 

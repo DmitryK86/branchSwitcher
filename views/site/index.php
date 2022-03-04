@@ -8,7 +8,7 @@ $stageAlias = Yii::$app->user->identity->alias;
 ?>
 <div class="popup-loader">
     <div class="popup-loader-in">
-        <img src="/img/loader.gif" alt="">
+        <img src="/img/loader2.gif" alt="">
         <span>Подождите...</span>
     </div>
 </div>
