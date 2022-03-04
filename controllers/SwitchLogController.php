@@ -36,8 +36,6 @@ class SwitchLogController extends Controller
     public function actionIndex()
     {
         $searchModel = new SwitchLogSearchForm();
-        trace($_GET);
-        trace(Yii::$app->request->getQueryParams(),1);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
