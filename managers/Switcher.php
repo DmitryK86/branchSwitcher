@@ -75,18 +75,18 @@ class Switcher
         if (!$ip){
             throw new \Exception("IP not defined for back-deploy");
         }
-//        if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
-//            $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
-//            $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
-//            $message = shell_exec($command);
-//        } else {
-//            $command = "ssh dev@{$ip} /var/www/{$this->stageId}/{$this->projectName}/update.sh {$this->branch}";
-//            $message = shell_exec($command);
-//        }
-//
-//        if (!is_array($message)){
-//            $message = implode('<br>', array_filter(explode("\n", $message)));
-//        }
+        if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
+            $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
+            $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
+            $message = shell_exec($command);
+        } else {
+            $command = "ssh dev@{$ip} /var/www/{$this->stageId}/{$this->projectName}/update.sh {$this->branch}";
+            $message = shell_exec($command);
+        }
+
+        if (!is_array($message)){
+            $message = implode('<br>', array_filter(explode("\n", $message)));
+        }
 
         $dto = new SwitchLogDto();
         $dto->user = $this->user;
@@ -95,7 +95,7 @@ class Switcher
         $dto->from = str_replace('On branch ', '', $this->getCurrentBranchData()[0] ?? '');
         $this->logger->logSwitch($dto);
 
-        $this->sendResponse(self::STATUS_OK, 'OK');
+        $this->sendResponse(self::STATUS_OK, $message);
     }
 
     private function applyCommand($command)
