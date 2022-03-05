@@ -38,6 +38,7 @@ class HelloController extends Controller
         $user = new User();
         $user->username = $username;
         $user->password = $password;
+        $user->password_repeat = $password;
         $user->alias = $alias;
         $user->role = User::ROLE_ROOT;
 

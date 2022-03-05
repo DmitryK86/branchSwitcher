@@ -187,7 +187,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function beforeValidate()
     {
-        $this->setPassword($this->password);
+        if ($this->password) {
+            $this->setPassword($this->password);
+        }
+
         return parent::beforeValidate();
     }
 
