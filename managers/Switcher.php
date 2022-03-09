@@ -75,6 +75,7 @@ class Switcher
         if (!$ip){
             throw new \Exception("IP not defined for back-deploy");
         }
+        $branchBefore = str_replace('On branch ', '', $this->getCurrentBranchData()[0] ?? '');
         if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
             $project = str_replace(self::BACK_SUFFIX, '', $this->projectName);
             $command = "ssh root@{$ip} ./update_backend.sh {$this->branch} {$this->stageId} {$project}";
@@ -92,7 +93,7 @@ class Switcher
         $dto->user = $this->user;
         $dto->alias = $this->projectName;
         $dto->to = $this->branch;
-        $dto->from = str_replace('On branch ', '', $this->getCurrentBranchData()[0] ?? '');
+        $dto->from = $branchBefore;
         $this->logger->logSwitch($dto);
 
         $this->sendResponse(self::STATUS_OK, $message);
