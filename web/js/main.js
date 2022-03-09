@@ -48,6 +48,7 @@ function checkoutBranch() {
 }
 
 function sendRequest(data) {
+    data.alias = $('#current-alias').val();
     showPopup(true);
     return $.ajax({
         url: "/",

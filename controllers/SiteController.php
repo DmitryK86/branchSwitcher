@@ -71,7 +71,8 @@ class SiteController extends Controller
             }
             $projectName = Yii::$app->request->post('project-name');
             $branch = Yii::$app->request->post('branch-name');
-            $switcher = new Switcher(Yii::$app->user->getIdentity(), $projectName, $branch);
+            $alias = Yii::$app->request->post('alias');
+            $switcher = new Switcher(Yii::$app->user->getIdentity(), $alias, $projectName, $branch);
             $switcher->{$action}();
         }
 

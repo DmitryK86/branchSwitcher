@@ -21,10 +21,10 @@ class Switcher
     protected ?string $branch;
     protected User $user;
 
-    public function __construct(User $user, $projectName = null, $branch = null)
+    public function __construct(User $user, string $alias, $projectName = null, $branch = null)
     {
         $this->user = $user;
-        $this->stageId = $user->alias;
+        $this->stageId = $alias;
         $this->logger = new Logger();
         $this->projectName = str_replace(' ', '', $projectName);
         $this->branch = str_replace(' ', '', $branch);

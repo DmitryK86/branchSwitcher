@@ -210,4 +210,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return $this->role == self::ROLE_ROOT;
     }
+
+    public function getAvailableAliases(): array
+    {
+        return explode(',', $this->alias);
+    }
 }
