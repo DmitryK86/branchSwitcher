@@ -1,11 +1,18 @@
 <?php
 
-/* @var $this yii\web\View */
+use yii\web\View;
+use app\models\forms\SwitchForm;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+
+/* @var $this View */
 
 /* @var $projects array */
+/* @var $model SwitchForm */
 
-$this->title = 'My Yii Application';
+$this->title = 'Branch Switcher';
 $stageAliases = Yii::$app->user->identity->getAvailableAliases();
+$multiAlias = count($stageAliases) > 1;
 ?>
 <div class="popup-loader">
     <div class="popup-loader-in">
@@ -16,41 +23,55 @@ $stageAliases = Yii::$app->user->identity->getAvailableAliases();
 <div class="site-index">
 
     <div class="body-content">
+
+        <input id="selected-project" type="hidden">
         <?php
-        if (count($stageAliases) == 1): ?>
-            <h3>Твой алиас проектов: <b><?= $stageAliases[0]; ?></b></h3>
-            <input id="current-alias" type="hidden" value="<?= $stageAliases[0]; ?>">
-        <?php
-        else: ?>
-            <h3 id="alias-title" style="display: none">Твой алиас проектов: </b></h3>
-            <input id="current-alias" type="hidden">
-            <div style="display: flex">
-                <div class="container">
-                    <select id="aliases">
-                        <option value="0" selected="selected">Выбери стейдж</option>
-                        <?php
-                        foreach ($stageAliases as $alias): ?>
-                            <option value="<?= $alias; ?>"><?= $alias; ?></option>
-                        <?php
-                        endforeach; ?>
-                    </select>
-                </div>
-            </div>
-        <?php
-        endif; ?>
+        $form = ActiveForm::begin(
+            [
+                'id' => 'login-form',
+                'options' => ['class' => 'form-horizontal'],
+            ]
+        )
+        ?>
         <div style="display: flex">
-            <div id="project-container" class="container" <?= count($stageAliases) > 1 ? 'style="display: none"' : null;?>>
-                <input id="selected-project" type="hidden">
-                <select id="projects" class="projects">
-                    <option value="0" selected="selected">Выбери проект</option>
-                    <?php
-                    foreach ($projects as $project): ?>
-                        <option value="<?= $project; ?>"><?= ucfirst($project); ?></option>
-                    <?php
-                    endforeach; ?>
-                </select>
-                <input id="apply-project-button" type="button" value="Применить"
-                       onclick="checkBranch($('.projects option:selected').val())">
+            <div style="width:100%;">
+                <?php
+                if ($multiAlias): ?>
+                    <?= $form->field($model, 'alias', ['options' => ['id' => 'alias-group']])->dropDownList(
+                        $stageAliases,
+                        [
+                            'style' => 'width:150px',
+                            'id' => 'alias',
+                            'prompt' => 'Выбрать',
+                        ]
+                    ); ?>
+                <?php
+                endif; ?>
+                <div id="project-container" <?= $multiAlias ? 'style="display:none"' : null; ?>>
+                    <h3 id="alias-title">
+                        Твой алиас проектов: <b><?= !$multiAlias ? $stageAliases[0] : null; ?></b>
+                    </h3>
+                    <input id="current-alias" type="hidden" value="<?= $stageAliases[0]; ?>">
+                    <?= $form->field($model, 'project', ['options' => ['style' => 'margin:0']])->dropDownList(
+                        array_combine($projects, $projects),
+                        [
+                            'style' => 'width:150px',
+                            'id' => 'projects',
+                            'prompt' => 'Выбрать',
+                        ]
+                    ) ?>
+                    <?= Html::button(
+                        'Применить',
+                        [
+                            'class' => 'btn btn-primary',
+                            'id' => 'apply-project-button',
+                            'onclick' => "checkBranch($('#projects option:selected').val())"
+                        ]
+                    ) ?>
+                </div>
+                <?php
+                ActiveForm::end() ?>
+
                 <div class="branch-status" style="display:none">
                     <div class="info"></div>
                     <input id="update-current" type="button" value="Обновить текущую ветку" onclick="updateCurrent()">
@@ -64,31 +85,32 @@ $stageAliases = Yii::$app->user->identity->getAvailableAliases();
                         <datalist id="branches">
                         </datalist>
                         <input id="checkout" type="button" value="Переключить" onclick="checkoutBranch()">
-                        <div class="checked-info" style="display: none"></div>
                     </div>
                 </div>
             </div>
             <div id="info" class="container">
 
             </div>
+
         </div>
+        <div class="checked-info"></div>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let stageId = '';
-        <?php if (count($stageAliases) > 1): ?>
-        $('#aliases').change(function (e) {
+        <?php if ($multiAlias): ?>
+        $('#alias').change(function (e) {
             let alias = $(this).find(":selected").text().toLowerCase();
             $('#current-alias').val(alias);
-            $(this).hide();
-            $('#alias-title').append(alias).show();
+            $('#alias-group').remove();
+            $('#alias-title').append('<b>'+alias+'</b>').show();
             $('#project-container').show();
             stageId = alias;
         });
         <?php else: ?>
-            stageId = '<?= $stageAliases[0];?>';
+        stageId = '<?= $stageAliases[0];?>';
         <?php endif; ?>
 
         $('#projects').change(function (e) {
@@ -105,10 +127,14 @@ $stageAliases = Yii::$app->user->identity->getAvailableAliases();
         mapping.lavina = 'lavina';
         mapping.funrize = 'funrize';
 
-        let domain = '<?= Yii::$app->params['stageDomain'] ?? ''?>';
         let project = $('#projects').find(":selected").text().toLowerCase().replace('-backend', '');
+        if (!(project in mapping)){
+            return;
+        }
+
+        let domain = '<?= Yii::$app->params['stageDomain'] ?? ''?>';
         let url, adminUrl;
-        if (stageId === 'main'){
+        if (stageId === 'main') {
             url = 'https://' + mapping[project] + '.' + domain;
             adminUrl = 'https://admin-' + mapping[project] + '.' + domain;
         } else {

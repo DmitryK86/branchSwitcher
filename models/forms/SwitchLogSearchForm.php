@@ -18,7 +18,7 @@ class SwitchLogSearchForm extends SwitchLog
     {
         return [
             [['id', 'user_id', 'created_at'], 'integer'],
-            [['alias', 'from_branch', 'to_branch', 'status'], 'safe'],
+            [['alias', 'from_branch', 'to_branch', 'status', 'project'], 'safe'],
         ];
     }
 
@@ -46,7 +46,7 @@ class SwitchLogSearchForm extends SwitchLog
             [
                 'query' => $query,
                 'pagination' => [
-                    'pageSize' => 20,
+                    'pageSize' => 50,
                 ],
             ]
         );
@@ -67,6 +67,7 @@ class SwitchLogSearchForm extends SwitchLog
                                ]);
 
         $query->andFilterWhere(['ilike', 'alias', $this->alias])
+            ->andFilterWhere(['ilike', 'project', $this->project])
             ->andFilterWhere(['ilike', 'from_branch', $this->from_branch])
             ->andFilterWhere(['ilike', 'to_branch', $this->to_branch])
             ->andFilterWhere(['ilike', 'status', $this->status]);

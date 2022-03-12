@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\managers\Switcher;
+use app\models\forms\SwitchForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -64,6 +65,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $model = new SwitchForm();
         if (Yii::$app->request->isPost){
             $action = Yii::$app->request->post('action');
             if (!$action){
@@ -76,7 +78,7 @@ class SiteController extends Controller
             $switcher->{$action}();
         }
 
-        return $this->render('index', ['projects' => Switcher::getProjects()]);
+        return $this->render('index', ['projects' => Switcher::getProjects(), 'model' => $model]);
     }
 
     /**

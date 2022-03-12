@@ -1,5 +1,5 @@
 function checkBranch(projectName) {
-    if (projectName === '0') {
+    if (projectName === '0' || projectName === '') {
         alert('Выбери проект!');
     }
     else {

@@ -11,6 +11,7 @@ class SwitchLogDto
 {
     public User $user;
     public string $alias;
+    public string $project;
     public string $from;
     public string $to;
     public string $status = SwitchLog::STATUS_SUCCESS;

@@ -11,6 +11,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $id
  * @property int $user_id
  * @property string $alias
+ * @property string $project
  * @property string|null $from_branch
  * @property string|null $to_branch
  * @property string|null $status
@@ -44,6 +45,10 @@ class SwitchLog extends \yii\db\ActiveRecord
 
             ['status', 'string', 'max' => 255],
             ['status', 'in', 'range' => array_keys(self::getStatuses())],
+
+            ['project', 'required'],
+            ['project', 'string', 'max' => 255],
+            ['project', 'in', 'range' => Yii::$app->params['projects']],
         ];
     }
 
@@ -59,6 +64,7 @@ class SwitchLog extends \yii\db\ActiveRecord
             'from_branch' => 'From Branch',
             'to_branch' => 'To Branch',
             'status' => 'Status',
+            'project' => 'Project',
             'created_at' => 'Created At',
         ];
     }

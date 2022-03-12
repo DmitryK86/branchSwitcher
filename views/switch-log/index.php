@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ArrayHelper::map(User::find()->asArray()->all(), 'id', 'username'),
             ],
             'alias',
+            'project',
             'from_branch',
             'to_branch',
             'status',

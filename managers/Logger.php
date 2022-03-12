@@ -20,11 +20,11 @@ class Logger
         $log->from_branch = $dto->from;
         $log->to_branch = $dto->to;
         $log->alias = $dto->alias;
+        $log->project = $dto->project;
         $log->status = $dto->status;
 
         if (!$log->save()) {
             \Yii::getLogger()->log(json_encode($log->getErrors(), JSON_PRETTY_PRINT), BaseLogger::LEVEL_ERROR);
-            trace($log->getErrors(),1);
         }
     }
 }

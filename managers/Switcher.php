@@ -73,7 +73,7 @@ class Switcher
     {
         $ip = \Yii::$app->params['ip'] ?? '';
         if (!$ip){
-            throw new \Exception("IP not defined for back-deploy");
+            throw new \Exception("Stage server IP not defined");
         }
         $branchBefore = str_replace('On branch ', '', $this->getCurrentBranchData()[0] ?? '');
         if (strpos($this->projectName, self::BACK_SUFFIX) !== false) {
@@ -91,7 +91,8 @@ class Switcher
 
         $dto = new SwitchLogDto();
         $dto->user = $this->user;
-        $dto->alias = $this->projectName;
+        $dto->alias = $this->stageId;
+        $dto->project = $this->projectName;
         $dto->to = $this->branch;
         $dto->from = $branchBefore;
         $this->logger->logSwitch($dto);
