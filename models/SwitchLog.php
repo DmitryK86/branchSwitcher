@@ -48,7 +48,6 @@ class SwitchLog extends \yii\db\ActiveRecord
 
             ['project', 'required'],
             ['project', 'string', 'max' => 255],
-            ['project', 'in', 'range' => Yii::$app->params['projects']],
         ];
     }
 
