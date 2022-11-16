@@ -126,6 +126,8 @@ $multiAlias = count($stageAliases) > 1;
         mapping.reel = 'reelemperror';
         mapping.lavina = 'lavina';
         mapping.funrize = 'funrize';
+        mapping.nlc = 'nolimitcoins';
+        mapping.tao = 'taofortune';
 
         let project = $('#projects').find(":selected").text().toLowerCase().replace('-backend', '');
         if (!(project in mapping)){
