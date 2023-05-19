@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ArrayExpression;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
@@ -21,6 +22,9 @@ use yii\web\IdentityInterface;
  * @property int $created_at
  * @property int $updated_at
  * @property string $alias
+ * @property string $ssh_key
+ * @property string $env_params
+ * @property array|ArrayExpression $projects
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -43,16 +47,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public static function getStatusesArray()
     {
         return [
-            self::STATUS_BLOCKED => 'Заблокирован',
             self::STATUS_ACTIVE => 'Активен',
+            self::STATUS_BLOCKED => 'Заблокирован',
         ];
     }
 
     public static function getRolesArray(): array
     {
         return [
-            self::ROLE_ROOT => 'Root',
             self::ROLE_USER => 'User',
+            self::ROLE_ROOT => 'Root',
         ];
     }
 
@@ -77,12 +81,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['auth_key'], 'string', 'max' => 32],
 
             [['email'], 'unique'],
+            [['email'], 'filter', 'filter' => 'trim'],
             [['email'], 'default', 'value' => null],
 
             [['username'], 'unique'],
+            [['username'], 'filter', 'filter' => 'trim'],
 
             [['password', 'password_repeat'], 'required', 'except' => self::SCENARIO_UPDATE],
             [['password', 'password_repeat'], 'string', 'max' => 32, 'min' => 6],
+            [['password', 'password_repeat'], 'filter', 'filter' => 'trim'],
             ['password', 'compare', 'compareAttribute' => 'password_repeat'],
 
             ['status', 'integer'],
@@ -91,9 +98,22 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
             ['role', 'in', 'range' => array_keys(self::getRolesArray())],
 
-            ['alias', 'required'],
-            ['alias', 'string', 'max' => 255]
+            ['alias', 'string', 'max' => 255],
+
+            ['ssh_key', 'string'],
+
+            ['env_params', 'validateValidJson'],
+
+            ['projects', 'each', 'rule' => ['integer']],
         ];
+    }
+
+    public function validateValidJson($attribute, $params, $validator)
+    {
+        json_decode($this->{$attribute});
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->addError($attribute, "{$this->getAttributeLabel($attribute)} not valid json");
+        }
     }
 
     /**
@@ -112,6 +132,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'alias' => 'Alias',
+            'ssh_key' => 'SSH Key',
+            'env_params' => 'Environment params',
+            'projects' => 'Projects',
         ];
     }
 
@@ -214,5 +237,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function getAvailableAliases(): array
     {
         return explode(',', $this->alias);
+    }
+
+    public function getProjects(): array
+    {
+        return $this->projects instanceof ArrayExpression ? $this->projects->getValue() : [];
     }
 }

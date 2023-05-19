@@ -11,6 +11,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
+$rootVisibility = !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -24,6 +25,9 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body>
+<?php if (Yii::$app->params['isMaintenanceMode'] && !Yii::$app->getUser()->getIsGuest() && !Yii::$app->getUser()->getIdentity()->isRoot()):?>
+<h1>Sorry, maintenance mode enabled</h1>
+<?php else:?>
 <?php $this->beginBody() ?>
 
 <div class="wrap">
@@ -38,9 +42,10 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Users', 'url' => ['/user/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot()],
-            ['label' => 'Log', 'url' => ['/switch-log/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot()],
+            ['label' => 'Home', 'url' => ['/environments/index']],
+            ['label' => 'Users', 'url' => ['/user/index'], 'visible' => $rootVisibility],
+            ['label' => 'Projects', 'url' => ['/project/index'], 'visible' => $rootVisibility],
+            ['label' => 'Repository', 'url' => ['/repository/index'], 'visible' => $rootVisibility],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
@@ -69,7 +74,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; <?= Yii::$app->params['company']; ?> <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
@@ -79,3 +84,5 @@ AppAsset::register($this);
 </body>
 </html>
 <?php $this->endPage() ?>
+
+<?php endif;?>

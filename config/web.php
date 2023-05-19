@@ -1,12 +1,14 @@
 <?php
 
+use app\managers\EnvService;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
     'name' => 'Branch Switcher',
     'id' => 'basic',
-    'timeZone' => 'Europe/Berlin',
+    'timeZone' => 'Europe/Kyiv',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
@@ -41,6 +43,7 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'logVars' => [],
                 ],
             ],
         ],
@@ -49,11 +52,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '/' => 'site/index',
+                '/' => 'environments/index',
                 'login' => 'site/login',
+                'callback/result/build/<envId:\d+>/<code:\w+>/<status:\w+>' => 'callback/index',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
+        ],
+        EnvService::class => [
+            'class' => EnvService::class,
         ],
     ],
     'params' => $params,
