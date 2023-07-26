@@ -22,7 +22,7 @@ use yii\db\ArrayExpression;
 class Project extends \yii\db\ActiveRecord
 {
     private const TYPE_MAIN = 'main_project';
-    private const TYPE_SERVICE = 'service_project';
+    public const TYPE_SERVICE = 'service_project';
 
     public const PROJECT_TYPES = [
         self::TYPE_MAIN => 'Main',
@@ -84,5 +84,10 @@ class Project extends \yii\db\ActiveRecord
         /** @var ArrayExpression $ids */
         $ids = $this->repositories_id;
         return $ids->getValue() ?: [];
+    }
+
+    public function isServiceProject(): bool
+    {
+        return self::TYPE_SERVICE == $this->type;
     }
 }

@@ -27,6 +27,12 @@ use app\models\UserEnvironments;
 
     <?= $form->field($model, 'comment')->textarea();?>
 
+    <?php if ($availableServices = UserEnvironments::findAvailableServicesForRelate(Yii::$app->user->id)):?>
+    <?= $form->field($model, 'related_services_id')->dropDownList(ArrayHelper::map($availableServices, 'id', function (UserEnvironments $env) {
+            return $env->project->name . " ($env->environment_code)";
+        }), ['multiple' => true]); ?>
+    <?php endif;?>
+
     <div class="form-group">
         <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>
     </div>

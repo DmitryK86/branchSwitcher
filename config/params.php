@@ -30,4 +30,5 @@ return [
     'connectionString' => 'ssh -J gateway@host:port user@CODE',
     'isMaintenanceMode' => false,
     'pathToLogs' => '',
+    'pathToStoreConfigs' => '',
 ];

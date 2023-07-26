@@ -1,6 +1,7 @@
 <?php
 
 use app\managers\EnvService;
+use app\managers\ExternalServiceConfigurator;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -62,6 +63,9 @@ $config = [
         ],
         EnvService::class => [
             'class' => EnvService::class,
+        ],
+        ExternalServiceConfigurator::class => [
+            'class' => ExternalServiceConfigurator::class,
         ],
     ],
     'params' => $params,

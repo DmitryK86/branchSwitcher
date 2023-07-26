@@ -151,6 +151,19 @@ $updateOneBranchButtons = [];
                     return $env->comment;
                 },
             ],
+            [
+                'format' => 'html',
+                'label' => 'Related services',
+                'value' => function(UserEnvironments $env){
+                    $result = [];
+                    foreach ($env->relatedServices as $serviceEnv) {
+                        $domain = \Yii::$app->params['stageDomain'];
+                        $url = "https://{$serviceEnv->environment_code}.{$domain}";
+                        $result[] = Html::a($serviceEnv->project->name . " ({$url})", $url, ['target' => '_blank']);
+                    }
+                    return implode('<br>', $result);
+                },
+            ],
         ],
     ]) ?>
 

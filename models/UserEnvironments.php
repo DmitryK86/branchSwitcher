@@ -19,11 +19,13 @@ use yii\db\ActiveRecord;
  * @property string|null $updated_at
  * @property string $status
  * @property string $comment
+ * @property array $related_services_id
  * @property string $ip
  *
  * @property Project $project
  * @property User $user
  * @property UserEnvironmentBranches[] $branches
+ * @property UserEnvironments[] $relatedServices
  */
 class UserEnvironments extends ActiveRecord
 {
@@ -67,6 +69,9 @@ class UserEnvironments extends ActiveRecord
             [['comment'], 'string'],
 
             [['ip'], 'ip'],
+
+            [['related_services_id'], 'each', 'rule' => ['integer']],
+            [['related_services_id'], 'validateRelatedServices'],
         ];
     }
 
@@ -97,7 +102,8 @@ class UserEnvironments extends ActiveRecord
             'updated_at' => 'Updated At',
             'status' => 'Status',
             'comment' => 'Comment',
-            'ip' => 'IP'
+            'ip' => 'IP',
+            'related_services_id' => 'Related services',
         ];
     }
 
@@ -112,6 +118,33 @@ class UserEnvironments extends ActiveRecord
         }
     }
 
+    public function validateRelatedServices($attribute, $params): void
+    {
+        if ($this->hasErrors()) {
+            return;
+        }
+        if (!$this->isNewRecord) {
+            return;
+        }
+
+        /** @var Project $currentProject */
+        $currentProject = Project::find()->andWhere(['id' => $this->project_id])->one();
+        foreach ($this->related_services_id as $serviceEnvId) {
+            /** @var UserEnvironments $serviceEnv */
+            $serviceEnv = self::find()->andWhere(['id' => $serviceEnvId])->one();
+            if (!$serviceEnv) {
+                $this->addError($attribute, "Service env with ID{$serviceEnvId} not found");
+                return;
+            }
+            $serviceProject = $serviceEnv->project;
+
+            if ($currentProject->code == $serviceProject->code) {
+                $this->addError($attribute, "Relate same projects not permitted");
+                return;
+            }
+        }
+    }
+
     /**
      * Gets query for [[Project]].
      *
@@ -122,19 +155,19 @@ class UserEnvironments extends ActiveRecord
         return $this->hasOne(Project::className(), ['id' => 'project_id']);
     }
 
-    /**
-     * Gets query for [[User]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
-    public function getBranches()
+    public function getBranches(): ActiveQuery
     {
         return $this->hasMany(UserEnvironmentBranches::className(), ['user_environment_id' => 'id'])->andWhere(['active' => true])->orderBy('id');
+    }
+
+    public function getRelatedServices(): ActiveQuery
+    {
+        return $this->hasMany(UserEnvironments::className(), ['id' => 'related_services_id']);
     }
 
     public static function getStatuses(): array
@@ -190,5 +223,20 @@ class UserEnvironments extends ActiveRecord
         if (!$this->save(true, ['status', 'updated_at'])) {
             throw new \Exception("Env status change error. Env #{$this->id}");
         }
+    }
+
+    public static function findAvailableServicesForRelate(int $userId): array
+    {
+        return self::find()
+            ->join('INNER JOIN', Project::tableName(), 'project.id = project_id')
+            ->where(
+                'project.type = :projectType AND user_id = :userId AND status = :status',
+                [
+                    ':projectType' => Project::TYPE_SERVICE,
+                    ':userId' => $userId,
+                    ':status' => self::STATUS_READY,
+                ]
+            )
+            ->all();
     }
 }

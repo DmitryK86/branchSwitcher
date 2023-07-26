@@ -15,17 +15,22 @@ class EnvService
 {
     private CommandBuilder $commandBuilder;
     private BranchResolverFactory $branchResolverFactory;
+    private ExternalServiceConfigurator $serviceConfigurator;
 
-    public function __construct(CommandBuilder $commandBuilder, BranchResolverFactory $branchResolverFactory)
-    {
+    public function __construct(
+        CommandBuilder $commandBuilder,
+        BranchResolverFactory $branchResolverFactory,
+        ExternalServiceConfigurator $serviceConfigurator
+    ) {
         $this->commandBuilder = $commandBuilder;
         $this->branchResolverFactory = $branchResolverFactory;
+        $this->serviceConfigurator = $serviceConfigurator;
     }
 
     public function create(UserEnvironments $userEnvironment): void
     {
         if (!$userEnvironment->validate()) {
-            throw new \Exception(print_r($userEnvironment->getErrorSummary(true)));
+            throw new \Exception(print_r($userEnvironment->getErrorSummary(true), true));
         }
 
         if (!\Yii::$app->db->getTransaction()) {
@@ -51,6 +56,8 @@ class EnvService
                     throw new \Exception("Failed to save branch data. Details: " . print_r($branch->getErrorSummary(true), true));
                 }
             }
+
+            $this->serviceConfigurator->configure($userEnvironment);
 
             if (isset($t)) {
                 $t->commit();
