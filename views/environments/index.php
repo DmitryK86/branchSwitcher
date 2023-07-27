@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             'filter' => Html::activeDropDownList(
                 $searchModel,
-                'project',
+                'project_id',
                 ArrayHelper::map(Project::findAll(['enabled' => true]), 'id', 'name'),
                 ['class' => 'form-control', 'prompt' => 'Все']
             )
