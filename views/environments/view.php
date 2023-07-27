@@ -107,6 +107,7 @@ $updateOneBranchButtons = [];
 
                     return str_replace('CODE', $code, \Yii::$app->params['connectionString'] ?? '');
                 },
+                'visible' => !empty(Yii::$app->getUser()->getIdentity()->ssh_key),
             ],
             [
                 'format' => 'html',
