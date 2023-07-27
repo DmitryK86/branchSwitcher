@@ -83,6 +83,35 @@ $this->params['breadcrumbs'][] = $this->title;
             },
         ],
         [
+            'label' => 'URL',
+            'format' => 'raw',
+            'headerOptions' => ['style' => 'width:100px'],
+            'value' => function (UserEnvironments $data) {
+                $code = $data->environment_code;
+                if (!$code) {
+                    return null;
+                }
+                $result = [];
+                $domain = \Yii::$app->params['stageDomain'];
+                foreach (\Yii::$app->params['stageSubdomainPrefixes'][$data->project->type] as $name => $prefix) {
+                    if (!in_array($name, ['WEB', 'Admin'])) {
+                        continue;
+                    }
+                    $url = "https://{$code}{$prefix}.{$domain}";
+                    $result[] = "<a href='{$url}' target='_blank'>{$name}</a>";
+                }
+
+                return implode('<br>', $result);
+            },
+        ],
+        [
+            'attribute' => 'comment',
+            'headerOptions' => ['style' => 'width: 200px'],
+            'value' => function (UserEnvironments $data) {
+                return $data->comment;
+            },
+        ],
+        [
             'attribute' => 'created_at',
             'value' => function (UserEnvironments $data) {
                 return date('Y-m-d H:i:s', strtotime($data->created_at));
