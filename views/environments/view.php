@@ -79,7 +79,7 @@ $updateOneBranchButtons = [];
                 },
             ],
             [
-                'format' => 'html',
+                'format' => 'raw',
                 'label' => 'URL-s',
                 'value' => function(UserEnvironments $env){
                     $code = $env->environment_code;
@@ -90,7 +90,8 @@ $updateOneBranchButtons = [];
                     $domain = \Yii::$app->params['stageDomain'];
                     foreach (\Yii::$app->params['stageSubdomainPrefixes'][$env->project->type] as $name => $prefix) {
                         $url = "https://{$code}{$prefix}.{$domain}";
-                        $result[] = Html::a($name . " ({$url})", $url, ['target' => '_blank']);
+                        $name = sprintf('%s (%s)', $name, $url);
+                        $result[] = "<a href='{$url}' target='_blank'>{$name}</a>";
                     }
 
                     return implode('<br>', $result);
