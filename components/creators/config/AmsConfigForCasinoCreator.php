@@ -4,10 +4,8 @@ namespace app\components\creators\config;
 
 use app\models\UserEnvironments;
 
-class AmsCreator implements ServiceConfigCreatorInterface
+class AmsConfigForCasinoCreator implements ServiceConfigCreatorInterface
 {
-    public const TYPE = 'ams';
-
     public function create(UserEnvironments $amsEnv): array
     {
         return [
@@ -15,8 +13,13 @@ class AmsCreator implements ServiceConfigCreatorInterface
         ];
     }
 
-    public static function getType(): string
+    public static function fromEnvType(): string
     {
-        return self::TYPE;
+        return self::TYPE_AMS;
+    }
+
+    public static function forEnvType(): string
+    {
+        return self::TYPE_CASINO;
     }
 }

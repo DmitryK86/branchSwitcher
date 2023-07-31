@@ -6,13 +6,27 @@ namespace app\components\creators\config;
 
 class ConfigCreatorFactory
 {
-    public function getCreator(string $type): ServiceConfigCreatorInterface
+    private array $creators = [
+        AmsConfigForCasinoCreator::class,
+        GPConfigForCasinoCreator::class,
+        GPConfigForAmsCreator::class,
+    ];
+
+    /** @return ServiceConfigCreatorInterface[] */
+    public function getCreators(string $fromType, string $toType): array
     {
-        switch ($type) {
-            case AmsCreator::TYPE:
-                return new AmsCreator();
-            default:
-                throw new \Exception("Config creator with type '{$type}' not found");
+        $creators = [];
+        foreach ($this->creators as $creatorClassName) {
+            if ($creatorClassName::fromEnvType() != $fromType) {
+                continue;
+            }
+            if ($creatorClassName::forEnvType() != $toType) {
+                continue;
+            }
+
+            $creators[] = new $creatorClassName();
         }
+
+        return $creators;
     }
 }

@@ -6,6 +6,7 @@ use app\models\UserEnvironments;
 use app\models\Project;
 use yii\helpers\ArrayHelper;
 use app\models\User;
+use app\helpers\EnvUrlBuilder;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\forms\UserEnvironmentsSearchForm */
@@ -97,7 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     if (!in_array($name, ['WEB', 'Admin'])) {
                         continue;
                     }
-                    $url = "https://{$code}{$prefix}.{$domain}";
+                    $url = EnvUrlBuilder::build($data, $name);
                     $result[] = "<a href='{$url}' target='_blank'>{$name}</a>";
                 }
 

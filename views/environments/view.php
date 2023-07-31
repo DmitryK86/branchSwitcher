@@ -8,6 +8,7 @@ use yii\helpers\Url;
 use app\helpers\LogHelper;
 use yii\helpers\ArrayHelper;
 use app\models\User;
+use app\helpers\EnvUrlBuilder;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\UserEnvironments */
@@ -89,9 +90,8 @@ $updateOneBranchButtons = [];
                         return null;
                     }
                     $result = [];
-                    $domain = \Yii::$app->params['stageDomain'];
                     foreach (\Yii::$app->params['stageSubdomainPrefixes'][$env->project->type] as $name => $prefix) {
-                        $url = "https://{$code}{$prefix}.{$domain}";
+                        $url = EnvUrlBuilder::build($env, $name);
                         $name = sprintf('%s (%s)', $name, $url);
                         $result[] = "<a href='{$url}' target='_blank'>{$name}</a>";
                     }
@@ -159,8 +159,7 @@ $updateOneBranchButtons = [];
                 'value' => function(UserEnvironments $env){
                     $result = [];
                     foreach ($env->relatedServices as $serviceEnv) {
-                        $domain = \Yii::$app->params['stageDomain'];
-                        $url = "https://{$serviceEnv->environment_code}.{$domain}";
+                        $url = EnvUrlBuilder::build($serviceEnv, EnvUrlBuilder::TYPE_WEB);
                         $result[] = Html::a($serviceEnv->project->name . " ({$url})", $url, ['target' => '_blank']);
                     }
                     return implode('<br>', $result);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\managers;
 
 use app\components\creators\config\ConfigCreatorFactory;
+use app\components\creators\config\ServiceConfigCreatorInterface;
 use app\models\UserEnvironments;
 
 class ExternalServiceConfigurator
@@ -34,8 +35,11 @@ class ExternalServiceConfigurator
                 throw new \Exception("Attempt to create config for service in status not ready");
             }
 
-            $confCreator = $this->factory->getCreator($serviceEnv->project->code);
-            $configs = array_merge($configs, $confCreator->create($serviceEnv));
+            $configCreatorForEnvType = $env->project->isServiceProject() ? $env->project->code : ServiceConfigCreatorInterface::TYPE_CASINO;
+            $confCreators = $this->factory->getCreators($serviceEnv->project->code, $configCreatorForEnvType);
+            foreach ($confCreators as $confCreator) {
+                $configs = array_merge($configs, $confCreator->create($serviceEnv));
+            }
         }
 
         if (file_put_contents($filename, json_encode($configs)) === false) {
