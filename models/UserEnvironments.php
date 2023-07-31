@@ -239,4 +239,18 @@ class UserEnvironments extends ActiveRecord
             )
             ->all();
     }
+
+    public static function removeRelatedServices(UserEnvironments $deletedEnv): void
+    {
+        /** @var UserEnvironments[] $relatedEnvs */
+        $relatedEnvs = self::find()->where(':service_env_id = ANY(related_services_id)', ['service_env_id' => $deletedEnv->id])->all();
+        foreach ($relatedEnvs as $env) {
+            $relatedIds = $env->related_services_id->getValue() ?? [];
+            if (($key = array_search($deletedEnv->id, $relatedIds)) !== false) {
+                unset($relatedIds[$key]);
+                $env->related_services_id = $relatedIds;
+                $env->saveOrFail(true, ['related_services_id']);
+            }
+        }
+    }
 }

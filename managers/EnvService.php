@@ -177,6 +177,7 @@ class EnvService
 
     public function delete(UserEnvironments $userEnvironment)
     {
+        UserEnvironments::removeRelatedServices($userEnvironment);
         $userEnvironment->setInProgress();
 
         $command = $this->commandBuilder->forDelete($userEnvironment);
