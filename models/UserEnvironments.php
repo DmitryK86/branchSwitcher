@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property string|null $updated_at
  * @property string $status
  * @property string $comment
+ * @property string $ip
  *
  * @property Project $project
  * @property User $user
@@ -64,6 +65,8 @@ class UserEnvironments extends ActiveRecord
             [['project_id'], 'validateEnvsCount'],
 
             [['comment'], 'string'],
+
+            [['ip'], 'ip'],
         ];
     }
 
@@ -94,6 +97,7 @@ class UserEnvironments extends ActiveRecord
             'updated_at' => 'Updated At',
             'status' => 'Status',
             'comment' => 'Comment',
+            'ip' => 'IP'
         ];
     }
 
