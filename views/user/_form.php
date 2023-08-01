@@ -29,6 +29,8 @@ use app\models\Project;
 
     <?= $form->field($model, 'env_params')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'projects')->checkboxList(ArrayHelper::map(Project::findAll(['enabled' => true]), 'id', 'name')) ?>
 
     <div class="form-group">
