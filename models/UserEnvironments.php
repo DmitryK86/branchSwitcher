@@ -5,6 +5,7 @@ namespace app\models;
 use app\models\aware\ActiveRecordAware;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ArrayExpression;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
 
@@ -21,11 +22,13 @@ use yii\db\ActiveRecord;
  * @property string $comment
  * @property array $related_services_id
  * @property string $ip
+ * @property array $added_users_keys
  *
  * @property Project $project
  * @property User $user
  * @property UserEnvironmentBranches[] $branches
  * @property UserEnvironments[] $relatedServices
+ * @property User[] $addedUsers
  */
 class UserEnvironments extends ActiveRecord
 {
@@ -72,6 +75,8 @@ class UserEnvironments extends ActiveRecord
 
             [['related_services_id'], 'each', 'rule' => ['integer']],
             [['related_services_id'], 'validateRelatedServices'],
+
+            [['added_users_keys'], 'each', 'rule' => ['integer']],
         ];
     }
 
@@ -165,6 +170,11 @@ class UserEnvironments extends ActiveRecord
         return $this->hasMany(UserEnvironmentBranches::className(), ['user_environment_id' => 'id'])->andWhere(['active' => true])->orderBy('id');
     }
 
+    public function getAddedUsers(): ActiveQuery
+    {
+        return $this->hasMany(User::className(), ['id' => 'added_users_keys'])->andWhere(['status' => User::STATUS_ACTIVE])->orderBy('username');
+    }
+
     public function getRelatedServices(): ActiveQuery
     {
         return $this->hasMany(UserEnvironments::className(), ['id' => 'related_services_id']);
@@ -252,5 +262,10 @@ class UserEnvironments extends ActiveRecord
                 $env->saveOrFail(true, ['related_services_id']);
             }
         }
+    }
+
+    public function getAddedUsersKeys(): array
+    {
+        return $this->added_users_keys instanceof ArrayExpression ? $this->added_users_keys->getValue() : [];
     }
 }

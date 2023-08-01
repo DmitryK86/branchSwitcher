@@ -10,6 +10,7 @@ use Yii;
 use app\models\UserEnvironments;
 use app\models\forms\UserEnvironmentsSearchForm;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\log\Logger;
 use yii\web\Controller;
 use yii\web\HttpException;
@@ -177,6 +178,23 @@ class EnvironmentsController extends Controller
         }
 
         return $this->redirect(['view', 'id' => $env->id]);
+    }
+
+    public function actionAddKey(int $envId)
+    {
+        $env = $this->findModel($envId);
+        $prevIds = $env->getAddedUsersKeys();
+        $env->load(Yii::$app->request->post());
+        $receivedIds = $env->added_users_keys;
+        $newIds = array_diff($receivedIds, $prevIds);
+        if ($newIds) {
+            $this->envService->addKey($env, $newIds);
+            $env->added_users_keys = array_merge($prevIds, $newIds);
+            $env->saveOrFail(true, ['added_users_keys']);
+            Yii::$app->session->addFlash('success', 'Keys added');
+        }
+
+        $this->redirect(['view', 'id' => $env->id]);
     }
 
     protected function findModel(int $id): UserEnvironments

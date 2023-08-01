@@ -8,6 +8,7 @@ use app\components\resolvers\branch\BranchResolverFactory;
 use app\exceptions\BranchResolveException;
 use app\exceptions\RepositoryNotFoundException;
 use app\models\Repository;
+use app\models\User;
 use app\models\UserEnvironmentBranches;
 use app\models\UserEnvironments;
 
@@ -182,6 +183,20 @@ class EnvService
 
         $command = $this->commandBuilder->forDelete($userEnvironment);
         $this->executeCommand($command);
+    }
+
+    public function addKey(UserEnvironments $env, array $usersIds)
+    {
+        // ssh.sh addssh hash user
+        /** @var User[] $users */
+        $users = User::find()->where(['in', 'id', $usersIds])->all();
+        foreach ($users as $user) {
+            if (!$user->ssh_key) {
+                throw new \Exception("User ID#{$user->username} has no ssh key");
+            }
+
+            $this->executeCommand($this->commandBuilder->forAddKey($env, $user));
+        }
     }
 
     private function executeCommand(string $command)

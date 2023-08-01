@@ -6,6 +6,8 @@ use app\models\UserEnvironments;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use app\helpers\LogHelper;
+use yii\helpers\ArrayHelper;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\UserEnvironments */
@@ -164,13 +166,45 @@ $updateOneBranchButtons = [];
                     return implode('<br>', $result);
                 },
             ],
+            [
+                'format' => 'html',
+                'label' => 'Added users',
+                'value' => function(UserEnvironments $env){
+                    $result = [];
+                    foreach ($env->addedUsers as $user) {
+                        $result[] = $user->username;
+                    }
+                    return implode('<br>', $result);
+                },
+            ],
         ],
     ]) ?>
 
     <p>
-        <?php if ($model->isInProgress()):?>
-        <?= Html::a('Status', ['view', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php endif;?>
+        <?php
+        if ($model->isInProgress()): ?>
+            <?= Html::a('Status', ['view', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php
+        endif; ?>
+
+        <?php
+        if ($model->isReady()): ?>
+        <?php
+        $form = ActiveForm::begin(['id' => 'create-form', 'validateOnSubmit' => false, 'action' => [Url::toRoute(['environments/add-key', 'envId' => $model->id])]]); ?>
+
+        <?= $form->field($model, 'added_users_keys')->dropDownList(
+            ArrayHelper::map(User::find()->where("coalesce(ssh_key, '') <> ''")->andWhere(['not in', 'id', $model->getAddedUsersKeys()])->orderBy('username')->all(), 'id', 'username'),
+            ['multiple' => true]
+        )->label('Add users ssh key to this env'); ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Add', ['class' => 'btn btn-info']) ?>
+        </div>
+
+        <?php
+        ActiveForm::end(); ?>
+        <?php
+        endif; ?>
     </p>
 
     <?php

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\managers;
 
 use app\models\Repository;
+use app\models\User;
 use app\models\UserEnvironments;
 use yii\helpers\ArrayHelper;
 
@@ -14,6 +15,7 @@ class CommandBuilder
     private const UPDATE_COMMAND = 'update';
     private const UPDATE_ONE_COMMAND = 'updatebranch';
     private const DELETE_COMMAND = 'delete';
+    private const ADD_KEY_COMMAND = 'addssh';
 
     private const ACTION = 'ACTION';
     private const COMMAND_MACROS_DATE = '{DATE}';
@@ -92,6 +94,19 @@ class CommandBuilder
             self::COMMAND_MACROS_ENV_CODE => $env->environment_code,
             self::COMMAND_MACROS_DATE => date('Y-m-d_H-i-s'),
             self::ACTION => self::DELETE_COMMAND,
+        ];
+
+        return $this->create($params);
+    }
+
+    public function forAddKey(UserEnvironments $env, User $user): string
+    {
+        $params = [
+            self::COMMAND_MACROS_ENV_ID => $env->id,
+            self::COMMAND_MACROS_ENV_CODE => $env->environment_code,
+            self::COMMAND_MACROS_USER => $user->username,
+            self::COMMAND_MACROS_DATE => date('Y-m-d_H-i-s'),
+            self::ACTION => self::ADD_KEY_COMMAND,
         ];
 
         return $this->create($params);
