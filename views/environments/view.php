@@ -159,7 +159,7 @@ $updateOneBranchButtons = [];
                 'value' => function(UserEnvironments $env){
                     $result = [];
                     foreach ($env->relatedServices as $serviceEnv) {
-                        $url = EnvUrlBuilder::build($serviceEnv, EnvUrlBuilder::TYPE_WEB);
+                        $url = EnvUrlBuilder::build($serviceEnv, EnvUrlBuilder::TYPE_ADMIN);
                         $result[] = Html::a($serviceEnv->project->name . " ({$url})", $url, ['target' => '_blank']);
                     }
                     return implode('<br>', $result);
