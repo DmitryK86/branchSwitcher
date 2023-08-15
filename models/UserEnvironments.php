@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
  * @property array $related_services_id
  * @property string $ip
  * @property array $added_users_keys
+ * @property string $basic_auth_removed_till
  *
  * @property Project $project
  * @property User $user
@@ -40,6 +41,8 @@ class UserEnvironments extends ActiveRecord
     public const STATUS_DELETED = 'deleted';
 
     public const MAX_ENVS_PER_PROJECT = 3;
+
+    public const MAX_REMOVE_AUTH_MINUTES = 60;
 
     public array $branchesData = [];
 
@@ -77,6 +80,8 @@ class UserEnvironments extends ActiveRecord
             [['related_services_id'], 'validateRelatedServices'],
 
             [['added_users_keys'], 'each', 'rule' => ['integer']],
+
+            [['basic_auth_removed_till'], 'safe'],
         ];
     }
 
@@ -109,6 +114,7 @@ class UserEnvironments extends ActiveRecord
             'comment' => 'Comment',
             'ip' => 'IP',
             'related_services_id' => 'Related services',
+            'basic_auth_removed_till' => 'Basic auth removed till'
         ];
     }
 

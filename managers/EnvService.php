@@ -187,7 +187,6 @@ class EnvService
 
     public function addKey(UserEnvironments $env, array $usersIds)
     {
-        // ssh.sh addssh hash user
         /** @var User[] $users */
         $users = User::find()->where(['in', 'id', $usersIds])->all();
         foreach ($users as $user) {
@@ -197,6 +196,27 @@ class EnvService
 
             $this->executeCommand($this->commandBuilder->forAddKey($env, $user));
         }
+    }
+
+    public function removeBasicAuth(UserEnvironments $env, int $timeout)
+    {
+        if ($timeout > UserEnvironments::MAX_REMOVE_AUTH_MINUTES) {
+            throw new \Exception("Max timeout is " . UserEnvironments::MAX_REMOVE_AUTH_MINUTES);
+        }
+
+        $this->executeCommand($this->commandBuilder->forRemoveAuth($env, $timeout));
+
+        $env->basic_auth_removed_till = (new \DateTime())->modify("+{$timeout} minutes")->format('Y-m-d H:i:00');
+        $env->saveOrFail(true, ['basic_auth_removed_till']);
+    }
+
+    public function reload(UserEnvironments $env)
+    {
+        if (!$env->isReady()) {
+            throw new \Exception("Can't reload env in not ready status");
+        }
+
+        $this->executeCommand($this->commandBuilder->forReload($env));
     }
 
     private function executeCommand(string $command)

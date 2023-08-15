@@ -176,6 +176,34 @@ $updateOneBranchButtons = [];
                     return implode('<br>', $result);
                 },
             ],
+            [
+                'format' => 'raw',
+                'label' => 'Remove basic auth',
+                'value' => function(UserEnvironments $env){
+                    if ($env->basic_auth_removed_till) {
+                        return date('Y-m-d H:i:s', strtotime($env->basic_auth_removed_till));
+                    }
+                    if (!$env->isReady()) {
+                        return null;
+                    }
+                    $content = Html::input('number', null, null, ['class' => 'form-control', 'style' => 'width:100px', 'min' => 10, 'max' => 60, 'placeholder' => 'minutes', 'id' => 'basic-auth-remove-minutes']);
+                    $content .= Html::button('Open', ['class' => 'btn btn-success', 'id' => 'basic-auth-remove-btn']);
+                    return Html::tag('div', $content, ['style' => 'display:flex;']);
+                },
+                'visible' => Yii::$app->user->getId() == 50,
+            ],
+            [
+                'format' => 'raw',
+                'label' => 'Reload',
+                'value' => function(UserEnvironments $env){
+                    if (!$env->isReady()) {
+                        return null;
+                    }
+
+                    return Html::a('Reload', Url::toRoute(['reload', 'id' => $env->id]), ['class' => 'btn btn-danger']);
+                },
+                'visible' => Yii::$app->user->getId() == 50,
+            ],
         ],
     ]) ?>
 
@@ -236,6 +264,23 @@ $updateOneBranchButtons = [];
             let branch = $('*[data-repository="'+repoCode+'"]').val();
 
             window.location.href = '/environments/update-one?id=<?= $model->id;?>&repositoryCode='+repoCode+'&branchName='+branch;
-        })
+        });
+
+        $('#basic-auth-remove-minutes').on('input', function () {
+            let val = $(this).val();
+            if (val > <?= UserEnvironments::MAX_REMOVE_AUTH_MINUTES;?>) {
+                val = <?= UserEnvironments::MAX_REMOVE_AUTH_MINUTES;?>
+            }
+
+            $(this).val(val);
+        });
+
+        $('#basic-auth-remove-btn').on('click', function () {
+            let timeout = $('#basic-auth-remove-minutes').val();
+            if (!timeout) {
+                return;
+            }
+            window.location.href = '/environments/remove-auth?id=<?= $model->id;?>&timeout='+ timeout;
+        });
     });
 </script>

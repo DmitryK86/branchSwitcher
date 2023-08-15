@@ -197,6 +197,33 @@ class EnvironmentsController extends Controller
         $this->redirect(['view', 'id' => $env->id]);
     }
 
+    public function actionRemoveAuth(int $id, int $timeout): Response
+    {
+        $env = $this->findModel($id);
+        try {
+            $this->envService->removeBasicAuth($env, $timeout);
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+        }
+
+        return $this->redirect(['view', 'id' => $env->id]);
+    }
+
+    public function actionReload(int $id): Response
+    {
+        $env = $this->findModel($id);
+        try {
+            $this->envService->reload($env);
+            Yii::$app->session->setFlash('success', 'Env successfully reloaded');
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+        }
+
+        return $this->redirect(['view', 'id' => $env->id]);
+    }
+
     protected function findModel(int $id): UserEnvironments
     {
         $env = UserEnvironments::findOne($id);

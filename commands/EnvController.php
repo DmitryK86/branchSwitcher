@@ -18,4 +18,17 @@ class EnvController extends Controller
 
         echo "Deleted {$count} envs" . PHP_EOL;
     }
+
+    public function actionRemoveExpiredBasicAuthTimeouts()
+    {
+        $envs = UserEnvironments::find()->where('basic_auth_removed_till <= now()')->all();
+        if (!$envs) {
+            return;
+        }
+
+        foreach ($envs as $env) {
+            $env->basic_auth_removed_till = null;
+            $env->saveOrFail(false, ['basic_auth_removed_till']);
+        }
+    }
 }
