@@ -118,6 +118,7 @@ class CommandBuilder
     {
         $params = [
             self::COMMAND_MACROS_ENV_CODE => $env->environment_code,
+            self::COMMAND_MACROS_ENV_ID => $env->id,
             self::COMMAND_MACROS_DATE => date('Y-m-d_H-i-s'),
             '{MINUTES}' => $timeout,
             self::ACTION => self::REMOVE_AUTH_COMMAND,
