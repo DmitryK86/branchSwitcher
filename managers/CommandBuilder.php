@@ -150,7 +150,7 @@ class CommandBuilder
         }
 
         // TODO make it better
-        if ($env->project_id == 1) {
+        if (in_array($env->project_id, [1,7])) {
             $result['FRONT_NUXT_BRANCH'] = 'none';
         }
 
