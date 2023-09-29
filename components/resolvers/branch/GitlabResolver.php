@@ -10,11 +10,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use yii\log\Logger;
 
-class BitbucketResolver implements BranchResolverInterface
+class GitlabResolver implements BranchResolverInterface
 {
-    private const API_URL = 'https://api.bitbucket.org/2.0/repositories/netgamellcteam/{api_code}/refs/branches';
+    private const API_URL = 'https://gitlab.ntgtech.net/api/v4/projects/{api_code}/repository/branches';
 
-    public const NAME = 'bitbucket';
+    public const NAME = 'gitlab';
 
     public static function getName(): string
     {
@@ -27,10 +27,9 @@ class BitbucketResolver implements BranchResolverInterface
 
         $client = new Client();
         try {
-            $response = $client->get($url . '?q=name ~ "' . $searchBranchName . '"', [
+            $response = $client->get($url . "?regex={$searchBranchName}", [
                 'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => "Bearer {$repository->api_token}",
+                    'PRIVATE-TOKEN' => $repository->api_token,
                 ],
             ]);
         } catch (RequestException $e) {
@@ -42,6 +41,6 @@ class BitbucketResolver implements BranchResolverInterface
 
         $response = json_decode($response->getBody()->getContents(), true);
 
-        return array_column($response['values'], 'name');
+        return array_column($response, 'name');
     }
 }

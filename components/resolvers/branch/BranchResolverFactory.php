@@ -8,6 +8,13 @@ class BranchResolverFactory
 {
     public function getByName(string $name): BranchResolverInterface
     {
-        return new BitbucketResolver();
+        switch ($name) {
+            case BitbucketResolver::NAME:
+                return new BitbucketResolver();
+            case GitlabResolver::NAME:
+                return new GitlabResolver();
+            default:
+                throw new \Exception("Branch resolver {$name} not implemented");
+        }
     }
 }
