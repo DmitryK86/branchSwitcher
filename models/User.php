@@ -36,6 +36,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     const ROLE_ROOT = 'root';
     const ROLE_USER = 'user';
 
+    const ALIAS_DEVOPS = 'devops';
+
     public $password;
     public $password_repeat;
 
@@ -242,5 +244,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function getProjects(): array
     {
         return $this->projects instanceof ArrayExpression ? $this->projects->getValue() : [];
+    }
+
+    public function isDevops(): bool
+    {
+        return $this->alias == self::ALIAS_DEVOPS;
     }
 }
