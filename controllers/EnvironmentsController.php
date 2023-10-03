@@ -201,6 +201,9 @@ class EnvironmentsController extends Controller
     {
         $env = $this->findModel($id);
         try {
+            if ($timeout > UserEnvironments::MAX_REMOVE_AUTH_MINUTES) {
+                throw new \Exception("Max timeout is " . UserEnvironments::MAX_REMOVE_AUTH_MINUTES);
+            }
             $this->envService->removeBasicAuth($env, $timeout);
         } catch (\Throwable $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());

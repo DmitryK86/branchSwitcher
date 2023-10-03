@@ -190,7 +190,6 @@ $updateOneBranchButtons = [];
                     $content .= Html::button('Open', ['class' => 'btn btn-success', 'id' => 'basic-auth-remove-btn']);
                     return Html::tag('div', $content, ['style' => 'display:flex;']);
                 },
-                'visible' => \Yii::$app->user->getIdentity()->isDevops(),
             ],
             [
                 'format' => 'raw',
