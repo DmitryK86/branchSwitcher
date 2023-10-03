@@ -27,7 +27,7 @@ return [
         'delete' => 'screen -dmS {ENV_ID} bash -c "~/stage/multistage.sh delete {ENV_ID} {HASH_NAME} > ~/logs/{DATE}-delete-{ENV_ID}.log"',
         'updatebranch' => 'screen -dmS {ENV_ID} bash -c "~/stage/multistage.sh updatebranch {ENV_ID} {HASH_NAME} {ONE_BRANCH_DATA} > ~/logs/{DATE}-updatebranch-{ENV_ID}.log"',
         'addssh' => 'screen -dmS {ENV_ID} bash -c "~/stage/ssh.sh addssh {HASH_NAME} {SSH_USER} > ~/logs/{DATE}-addssh-{ENV_ID}.log"',
-        'remove_auth' => '~/stage/openaccess.sh open {HASH_NAME} {MINUTES} > ~/logs/{DATE}-openaccess-{ENV_ID}.log',
+        'remove_auth' => 'sudo ~/stage/openaccess.sh open {HASH_NAME} {MINUTES} > ~/logs/{DATE}-openaccess-{ENV_ID}.log',
         'reload' => 'lxc stop -f {HASH_NAME} && lxc start {HASH_NAME}',
     ],
     'connectionString' => 'ssh -J gateway@host:port user@CODE',
