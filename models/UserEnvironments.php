@@ -124,8 +124,10 @@ class UserEnvironments extends ActiveRecord
             return;
         }
         $count = self::find()->where(['user_id' => $this->user_id,'project_id' => $this->project_id, 'status' => [self::STATUS_READY, self::STATUS_IN_PROGRESS]])->count();
-        if ($count >= self::MAX_ENVS_PER_PROJECT) {
-            $this->addError($attribute, sprintf("Max envs count per project is exceeded (max %d)", self::MAX_ENVS_PER_PROJECT));
+        $userParams = User::findOne(['id' => $this->user_id])->env_params;
+        $maxCount = json_decode($userParams, true)['max_envs'] ?? self::MAX_ENVS_PER_PROJECT;
+        if ($count >= $maxCount) {
+            $this->addError($attribute, sprintf("Max envs count per project is exceeded (max %d)", $maxCount));
         }
     }
 
