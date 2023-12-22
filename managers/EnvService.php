@@ -219,6 +219,15 @@ class EnvService
         $this->executeCommand($this->commandBuilder->forReload($env));
     }
 
+    public function updateDB(UserEnvironments $env)
+    {
+        if (!$env->isReady()) {
+            throw new \Exception("Can't update env in not ready status");
+        }
+
+        $this->executeCommand($this->commandBuilder->forUpdateDB($env));
+    }
+
     private function executeCommand(string $command)
     {
         if (\Yii::$app->user->getIdentity()->isDevops()) {

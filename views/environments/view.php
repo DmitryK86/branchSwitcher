@@ -203,6 +203,17 @@ $updateOneBranchButtons = [];
                 },
                 'visible' => \Yii::$app->user->getIdentity()->isDevops(),
             ],
+            [
+                'format' => 'raw',
+                'label' => 'Update DB',
+                'value' => function(UserEnvironments $env){
+                    if (!$env->isReady()) {
+                        return null;
+                    }
+
+                    return Html::a('Go', Url::toRoute(['update-database', 'id' => $env->id]), ['class' => 'btn btn-info']);
+                },
+            ],
         ],
     ]) ?>
 

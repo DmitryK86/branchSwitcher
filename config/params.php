@@ -29,6 +29,7 @@ return [
         'addssh' => 'screen -dmS {ENV_ID} bash -c "~/stage/ssh.sh addssh {HASH_NAME} {SSH_USER} > ~/logs/{DATE}-addssh-{ENV_ID}.log"',
         'remove_auth' => 'sudo ~/stage/openaccess.sh open {HASH_NAME} {MINUTES} > ~/logs/{DATE}-openaccess-{ENV_ID}.log',
         'reload' => 'lxc stop -f {HASH_NAME} && lxc start {HASH_NAME}',
+        'updateDB' => '~/stage/updatedb.sh {HASH_NAME} > ~/logs/{DATE}-updateDB-{ENV_ID}.log',
     ],
     'connectionString' => 'ssh -J gateway@host:port user@CODE',
     'isMaintenanceMode' => false,

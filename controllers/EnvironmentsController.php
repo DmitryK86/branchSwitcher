@@ -227,6 +227,20 @@ class EnvironmentsController extends Controller
         return $this->redirect(['view', 'id' => $env->id]);
     }
 
+    public function actionUpdateDatabase(int $id): Response
+    {
+        $env = $this->findModel($id);
+        try {
+            $this->envService->updateDB($env);
+            Yii::$app->session->setFlash('success', 'Env DB successfully updated');
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+        }
+
+        return $this->redirect(['view', 'id' => $env->id]);
+    }
+
     protected function findModel(int $id): UserEnvironments
     {
         $env = UserEnvironments::findOne($id);

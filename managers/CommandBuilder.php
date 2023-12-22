@@ -18,6 +18,7 @@ class CommandBuilder
     private const ADD_KEY_COMMAND = 'addssh';
     private const REMOVE_AUTH_COMMAND = 'remove_auth';
     private const RELOAD_COMMAND = 'reload';
+    private const UPDATE_DB_COMMAND = 'updateDB';
 
     private const ACTION = 'ACTION';
     private const COMMAND_MACROS_DATE = '{DATE}';
@@ -127,12 +128,24 @@ class CommandBuilder
         return $this->create($params);
     }
 
-    public function forReload(UserEnvironments $env)
+    public function forReload(UserEnvironments $env): string
     {
         $params = [
             self::COMMAND_MACROS_ENV_CODE => $env->environment_code,
             self::COMMAND_MACROS_DATE => date('Y-m-d_H-i-s'),
             self::ACTION => self::RELOAD_COMMAND,
+        ];
+
+        return $this->create($params);
+    }
+
+    public function forUpdateDB(UserEnvironments $env): string
+    {
+        $params = [
+            self::COMMAND_MACROS_ENV_CODE => $env->environment_code,
+            self::COMMAND_MACROS_ENV_ID => $env->id,
+            self::COMMAND_MACROS_DATE => date('Y-m-d_H-i-s'),
+            self::ACTION => self::UPDATE_DB_COMMAND,
         ];
 
         return $this->create($params);
