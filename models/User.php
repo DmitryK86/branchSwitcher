@@ -249,7 +249,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function isDevops(): bool
     {
-        return $this->group->name == self::ALIAS_DEVOPS;
+        return $this->getGroupName() == self::ALIAS_DEVOPS;
     }
 
     public function getGroup(): ActiveQuery
