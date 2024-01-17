@@ -14,7 +14,7 @@ class MaxEnvCountResolver
     public function resolveForUserAndProject(User $user, int $projectId): int
     {
         return $this->fromJson($user->env_params, $projectId) ?: $this->fromJson(
-            $user->group->params,
+            $user->group->params ?? '',
             $projectId
         ) ?: self::MAX_ENVS_PER_PROJECT;
     }
