@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\managers\MaxEnvCountResolver;
 use app\models\aware\ActiveRecordAware;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -126,8 +127,8 @@ class UserEnvironments extends ActiveRecord
             return;
         }
         $count = self::find()->where(['user_id' => $this->user_id,'project_id' => $this->project_id, 'status' => [self::STATUS_READY, self::STATUS_IN_PROGRESS]])->count();
-        $userParams = User::findOne(['id' => $this->user_id])->env_params;
-        $maxCount = json_decode($userParams, true)['max_envs'] ?? self::MAX_ENVS_PER_PROJECT;
+        $user = User::findOne(['id' => $this->user_id]);
+        $maxCount = (new MaxEnvCountResolver())->resolveForUserAndProject($user, $this->project_id);
         if ($count >= $maxCount) {
             $this->addError($attribute, sprintf("Max envs count per project is exceeded (max %d)", $maxCount));
         }

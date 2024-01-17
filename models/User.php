@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ArrayExpression;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
@@ -24,7 +25,10 @@ use yii\web\IdentityInterface;
  * @property string $alias
  * @property string $ssh_key
  * @property string $env_params
+ * @property int $group_id
  * @property array|ArrayExpression $projects
+ *
+ * @property Group $group
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
@@ -100,13 +104,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
             ['role', 'in', 'range' => array_keys(self::getRolesArray())],
 
-            ['alias', 'string', 'max' => 255],
-
             ['ssh_key', 'string'],
 
             ['env_params', 'validateValidJson'],
 
             ['projects', 'each', 'rule' => ['integer']],
+
+            ['group_id', 'required'],
+            ['group_id', 'integer'],
         ];
     }
 
@@ -137,6 +142,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'ssh_key' => 'SSH Key',
             'env_params' => 'Environment params',
             'projects' => 'Projects',
+            'group_id' => 'Group',
         ];
     }
 
@@ -236,11 +242,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->role == self::ROLE_ROOT;
     }
 
-    public function getAvailableAliases(): array
-    {
-        return explode(',', $this->alias);
-    }
-
     public function getProjects(): array
     {
         return $this->projects instanceof ArrayExpression ? $this->projects->getValue() : [];
@@ -248,6 +249,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function isDevops(): bool
     {
-        return $this->alias == self::ALIAS_DEVOPS;
+        return $this->group->name == self::ALIAS_DEVOPS;
+    }
+
+    public function getGroup(): ActiveQuery
+    {
+        return $this->hasOne(Group::className(), ['id' => 'group_id']);
+    }
+
+    public function getGroupName(): ?string
+    {
+        return $this->group->name ?? null;
     }
 }

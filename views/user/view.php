@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
@@ -36,13 +37,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'email:email',
             [
                 'label' => 'Status',
-                'value' => function(\app\models\User $user){
-                    return \app\models\User::getStatusesArray()[$user->status] ?? 'n/a';
+                'value' => function(User $user){
+                    return User::getStatusesArray()[$user->status] ?? 'n/a';
                 },
             ],
             'created_at:datetime',
             'updated_at:datetime',
-            'alias',
+            [
+                'label' => 'Group',
+                'format' => 'html',
+                'value' => function(User $user){
+                    return Html::tag('code', $user->group->name ?? null);
+                },
+            ],
         ],
     ]) ?>
 

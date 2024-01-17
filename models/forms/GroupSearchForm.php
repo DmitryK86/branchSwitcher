@@ -4,21 +4,21 @@ namespace app\models\forms;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\User;
+use app\models\Group;
 
 /**
- * UserSearchForm represents the model behind the search form of `app\models\User`.
+ * GroupSearchForm represents the model behind the search form of `app\models\Groups`.
  */
-class UserSearchForm extends User
+class GroupSearchForm extends Group
 {
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['role', 'username', 'email', 'alias'], 'safe'],
+            [['id'], 'integer'],
+            [['name', 'params'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class UserSearchForm extends User
      */
     public function search($params)
     {
-        $query = User::find()->orderBy('id DESC');
+        $query = Group::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +59,10 @@ class UserSearchForm extends User
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['ilike', 'role', $this->role])
-            ->andFilterWhere(['ilike', 'username', $this->username])
-            ->andFilterWhere(['ilike', 'email', $this->email])
-            ->andFilterWhere(['group_id' => $this->group_id]);
+        $query->andFilterWhere(['ilike', 'name', $this->name])
+            ->andFilterWhere(['ilike', 'params', $this->params]);
 
         return $dataProvider;
     }

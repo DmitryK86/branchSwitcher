@@ -11,7 +11,7 @@ use yii\helpers\Html;
 /* @var $model SwitchForm */
 
 $this->title = 'Branch Switcher';
-$stageAliases = Yii::$app->user->identity->getAvailableAliases();
+$stageAliases = [];
 $multiAlias = count($stageAliases) > 1;
 ?>
 <div class="popup-loader">

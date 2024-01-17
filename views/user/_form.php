@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\models\Project;
+use app\models\Group;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
@@ -29,7 +30,7 @@ use app\models\Project;
 
     <?= $form->field($model, 'env_params')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'alias')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'group_id')->dropDownList(ArrayHelper::map(Group::findAll(['enabled' => true]), 'id', 'name'), ['prompt' => ' -- ']); ?>
 
     <?= $form->field($model, 'projects')->checkboxList(ArrayHelper::map(Project::findAll(['enabled' => true]), 'id', 'name')) ?>
 

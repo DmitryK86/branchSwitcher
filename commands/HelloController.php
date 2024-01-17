@@ -39,7 +39,6 @@ class HelloController extends Controller
         $user->username = $username;
         $user->password = $password;
         $user->password_repeat = $password;
-        $user->alias = $alias;
         $user->role = User::ROLE_ROOT;
 
         if (!$user->save()){
