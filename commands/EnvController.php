@@ -48,7 +48,9 @@ class EnvController extends Controller
     {
         $expiredEnvs = $this->envRepository->findExpiredEnvs(UserEnvironments::EXPIRED_ENV_DAYS);
         foreach ($expiredEnvs as $expiredEnv) {
+            $expDate = $expiredEnv->updated_at;
             $this->envService->delete($expiredEnv);
+            \Yii::warning("Env ID#{$expiredEnv->id} was deleted (expire: {$expDate})", 'env.remove.command');
         }
     }
 }

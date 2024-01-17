@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function(User $user) {
                     return $user->getGroupName();
                 },
+                'format' => 'html',
                 'filter' => ArrayHelper::map(Group::findAll(['enabled' => true]), 'id', 'name'),
             ],
 

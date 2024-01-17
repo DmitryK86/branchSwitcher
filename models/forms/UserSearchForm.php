@@ -17,7 +17,7 @@ class UserSearchForm extends User
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'status', 'created_at', 'updated_at', 'group_id'], 'integer'],
             [['role', 'username', 'email', 'alias'], 'safe'],
         ];
     }
