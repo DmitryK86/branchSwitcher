@@ -2,11 +2,23 @@
 
 namespace app\commands;
 
+use app\managers\EnvService;
 use app\models\UserEnvironments;
+use app\repository\UserEnvironmentsRepository;
 use yii\console\Controller;
 
 class EnvController extends Controller
 {
+    private EnvService $envService;
+    private UserEnvironmentsRepository $envRepository;
+
+    public function __construct($id, $module, EnvService $envService, UserEnvironmentsRepository $envRepository)
+    {
+        parent::__construct($id, $module);
+        $this->envService = $envService;
+        $this->envRepository = $envRepository;
+    }
+
     public function actionRemoveDeletedEnvs(string $deletedTillMinutesAgo = '20')
     {
         $deleteTillDate = date(DATE_RFC3339, strtotime("-{$deletedTillMinutesAgo} minutes"));
@@ -29,6 +41,14 @@ class EnvController extends Controller
         foreach ($envs as $env) {
             $env->basic_auth_removed_till = null;
             $env->saveOrFail(false, ['basic_auth_removed_till']);
+        }
+    }
+
+    public function actionRemoveExpiredEnvs()
+    {
+        $expiredEnvs = $this->envRepository->findExpiredEnvs(UserEnvironments::EXPIRED_ENV_DAYS);
+        foreach ($expiredEnvs as $expiredEnv) {
+            $this->envService->delete($expiredEnv);
         }
     }
 }

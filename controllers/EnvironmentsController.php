@@ -3,9 +3,12 @@
 namespace app\controllers;
 
 use app\components\resolvers\branch\BranchResolverFactory;
+use app\managers\EnvChecker;
+use app\managers\EnvExpirationInformer;
 use app\managers\EnvService;
 use app\models\Project;
 use app\models\Repository;
+use app\models\User;
 use Yii;
 use app\models\UserEnvironments;
 use app\models\forms\UserEnvironmentsSearchForm;
@@ -21,12 +24,14 @@ use yii\web\Response;
 class EnvironmentsController extends Controller
 {
     private EnvService $envService;
+    private EnvExpirationInformer $informer;
 
-    public function __construct($id, $module, $config = [], EnvService $envService)
+    public function __construct($id, $module, $config = [], EnvService $envService, EnvExpirationInformer $informer)
     {
         parent::__construct($id, $module, $config);
 
         $this->envService = $envService;
+        $this->informer = $informer;
     }
 
     /**
@@ -55,7 +60,13 @@ class EnvironmentsController extends Controller
 
     public function actionIndex(): string
     {
-        $searchModel = new UserEnvironmentsSearchForm(Yii::$app->getUser()->getIdentity());
+        /** @var User $user */
+        $user = Yii::$app->getUser()->getIdentity();
+        if ($info = $this->informer->getExpirationInfo($user, Yii::$app->getRequest(), Yii::$app->getResponse())) {
+            Yii::$app->getSession()->setFlash('info', implode('<br>', $info));
+        }
+
+        $searchModel = new UserEnvironmentsSearchForm($user);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

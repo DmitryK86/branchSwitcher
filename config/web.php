@@ -2,6 +2,7 @@
 
 use app\managers\EnvService;
 use app\managers\ExternalServiceConfigurator;
+use app\managers\EnvExpirationInformer;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -66,6 +67,9 @@ $config = [
         ],
         ExternalServiceConfigurator::class => [
             'class' => ExternalServiceConfigurator::class,
+        ],
+        EnvExpirationInformer::class => [
+            'class' => EnvExpirationInformer::class,
         ],
     ],
     'params' => $params,

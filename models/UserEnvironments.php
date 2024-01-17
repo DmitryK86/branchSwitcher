@@ -44,6 +44,8 @@ class UserEnvironments extends ActiveRecord
 
     public const MAX_REMOVE_AUTH_MINUTES = 60;
 
+    public const EXPIRED_ENV_DAYS = 30;
+
     public array $branchesData = [];
 
     /**

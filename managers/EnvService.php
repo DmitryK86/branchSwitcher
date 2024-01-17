@@ -230,7 +230,7 @@ class EnvService
 
     private function executeCommand(string $command)
     {
-        if (\Yii::$app->user->getIdentity()->isDevops()) {
+        if (isset(\Yii::$app->user) && \Yii::$app->user->getIdentity()->isDevops()) {
             $command = str_replace('multistage.sh', 'multistage2.sh', $command);
         }
         $result = shell_exec($command);
