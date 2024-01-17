@@ -40,7 +40,7 @@ class UserEnvironments extends ActiveRecord
     public const STATUS_ERROR = 'error';
     public const STATUS_DELETED = 'deleted';
 
-    public const MAX_ENVS_PER_PROJECT = 3;
+    public const MAX_ENVS_PER_PROJECT = 1;
 
     public const MAX_REMOVE_AUTH_MINUTES = 60;
 
