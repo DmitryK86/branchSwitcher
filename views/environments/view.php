@@ -205,7 +205,7 @@ $updateOneBranchButtons = [];
             ],
             [
                 'format' => 'raw',
-                'label' => 'Update DB',
+                'label' => 'Reload DB',
                 'value' => function(UserEnvironments $env){
                     if (!$env->isReady()) {
                         return null;
