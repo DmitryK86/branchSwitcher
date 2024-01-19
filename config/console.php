@@ -23,6 +23,14 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'except' => ['env.remove.*']
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                    'categories' => ['env.remove.*'],
+                    'logVars' => [],
+                    'logFile' => '@app/runtime/logs/env_deletion.log'
                 ],
             ],
         ],

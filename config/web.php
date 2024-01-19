@@ -47,13 +47,6 @@ $config = [
                     'levels' => ['error', 'warning'],
                     'logVars' => [],
                 ],
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                    'categories' => ['env.remove.*'],
-                    'logVars' => [],
-                    'logFile' => '@app/runtime/logs/env_deletion.log'
-                ],
             ],
         ],
         'db' => $db,
