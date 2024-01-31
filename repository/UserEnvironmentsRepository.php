@@ -15,8 +15,13 @@ class UserEnvironmentsRepository
     public function findUserExpiredEnvs(User $user, int $expDaysInterval = 20): array
     {
         return UserEnvironments::find()
-            ->where("user_id = :userId AND environment_code IS NOT NULL AND status = 'ready' AND updated_at <= NOW() - interval '{$expDaysInterval} days'")
-            ->params([':userId' => $user->id])
+            ->where("
+            user_id = :userId 
+            AND environment_code IS NOT NULL 
+            AND status = 'ready' 
+            AND is_persist = FALSE 
+            AND updated_at <= NOW() - interval '{$expDaysInterval} days'"
+            )->params([':userId' => $user->id])
             ->all();
     }
 
@@ -26,7 +31,11 @@ class UserEnvironmentsRepository
     public function findExpiredEnvs(int $expDaysInterval = 30): array
     {
         return UserEnvironments::find()
-            ->where("environment_code IS NOT NULL AND status = 'ready' AND updated_at <= NOW() - interval '{$expDaysInterval} days'")
-            ->all();
+            ->where("
+            environment_code IS NOT NULL 
+            AND status = 'ready' 
+            AND updated_at <= NOW() - interval '{$expDaysInterval} days' 
+            AND is_persist = FALSE"
+            )->all();
     }
 }

@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  * @property string $ip
  * @property array $added_users_keys
  * @property string $basic_auth_removed_till
+ * @property bool $is_persist
  *
  * @property Project $project
  * @property User $user
@@ -85,6 +86,8 @@ class UserEnvironments extends ActiveRecord
             [['added_users_keys'], 'each', 'rule' => ['integer']],
 
             [['basic_auth_removed_till'], 'safe'],
+
+            [['is_persist'], 'boolean'],
         ];
     }
 
@@ -117,7 +120,8 @@ class UserEnvironments extends ActiveRecord
             'comment' => 'Comment',
             'ip' => 'IP',
             'related_services_id' => 'Related services',
-            'basic_auth_removed_till' => 'Basic auth removed till'
+            'basic_auth_removed_till' => 'Basic auth removed till',
+            'is_persist' => 'Is persist',
         ];
     }
 

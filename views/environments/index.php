@@ -125,6 +125,14 @@ $this->params['breadcrumbs'][] = $this->title;
             },
         ],
         [
+            'attribute' => 'is_persist',
+            'value' => function (UserEnvironments $data) {
+                return $data->is_persist;
+            },
+            'visible' => Yii::$app->getUser()->getIdentity()->isRoot(),
+            'format' => 'boolean',
+        ],
+        [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{view}',
         ]

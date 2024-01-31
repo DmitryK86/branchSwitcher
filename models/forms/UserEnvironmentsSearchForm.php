@@ -28,7 +28,7 @@ class UserEnvironmentsSearchForm extends UserEnvironments
     {
         return [
             [['user_id', 'project_id'], 'integer'],
-            [['environment_code', 'created_at', 'updated_at', 'status'], 'safe'],
+            [['environment_code', 'created_at', 'updated_at', 'status', 'is_persist'], 'safe'],
         ];
     }
 
@@ -73,6 +73,7 @@ class UserEnvironmentsSearchForm extends UserEnvironments
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'status' => $this->status,
+            'is_persist' => $this->is_persist,
         ]);
 
         $query->andFilterWhere(['ilike', 'environment_code', $this->environment_code]);
