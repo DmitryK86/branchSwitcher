@@ -183,12 +183,11 @@ class EnvironmentsController extends Controller
         $env = $this->findModel($id);
         if ($comment = Yii::$app->request->getBodyParam('comment')) {
             $env->comment = $comment;
-            if (!$env->save()) {
+            if (!$env->save(true, ['comment'])) {
                 throw new \Exception(json_encode($env->getErrorSummary(true)));
             }
         }
-
-        return $this->redirect(['view', 'id' => $env->id]);
+        return $this->asJson(['success' => true]);
     }
 
     public function actionAddKey(int $envId)
@@ -198,11 +197,15 @@ class EnvironmentsController extends Controller
         $env->load(Yii::$app->request->post());
         $receivedIds = $env->added_users_keys;
         $newIds = array_diff($receivedIds, $prevIds);
-        if ($newIds) {
-            $this->envService->addKey($env, $newIds);
-            $env->added_users_keys = array_merge($prevIds, $newIds);
-            $env->saveOrFail(true, ['added_users_keys']);
-            Yii::$app->session->addFlash('success', 'Keys added');
+        if (count($newIds) > UserEnvironments::MAX_USER_KEYS_PER_REQUEST) {
+            Yii::$app->session->addFlash('error', sprintf('You can add only %d user-keys per request', UserEnvironments::MAX_USER_KEYS_PER_REQUEST));
+        } else {
+            if ($newIds) {
+                $this->envService->addKey($env, $newIds);
+                $env->added_users_keys = array_merge($prevIds, $newIds);
+                $env->saveOrFail(true, ['added_users_keys']);
+                Yii::$app->session->addFlash('success', 'Keys added');
+            }
         }
 
         $this->redirect(['view', 'id' => $env->id]);

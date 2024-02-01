@@ -48,6 +48,8 @@ class UserEnvironments extends ActiveRecord
 
     public const EXPIRED_ENV_DAYS = 30;
 
+    public const MAX_USER_KEYS_PER_REQUEST = 3;
+
     public array $branchesData = [];
 
     /**

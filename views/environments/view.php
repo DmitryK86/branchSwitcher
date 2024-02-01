@@ -147,10 +147,15 @@ $updateOneBranchButtons = [];
                 },
             ],
             [
-                'format' => 'html',
+                'format' => 'raw',
                 'label' => 'Comment',
                 'value' => function(UserEnvironments $env){
-                    return $env->comment;
+                    if (!$env->isReady()) {
+                        return null;
+                    }
+                    $content = Html::input('text', null, $env->comment, ['class' => 'form-control', 'style' => 'width:100%', 'id' => 'comment']);
+                    $content .= Html::button('Update', ['class' => 'btn btn-success', 'id' => 'comment-btn', 'disabled' => true]);
+                    return Html::tag('div', $content, ['style' => 'display:flex;', 'id' => 'comment-container']);
                 },
             ],
             [
@@ -231,7 +236,7 @@ $updateOneBranchButtons = [];
 
         <?= $form->field($model, 'added_users_keys')->dropDownList(
             ArrayHelper::map(User::find()->where("coalesce(ssh_key, '') <> ''")->andWhere(['not in', 'id', $model->getAddedUsersKeys()])->orderBy('username')->all(), 'id', 'username'),
-            ['multiple' => true]
+            ['multiple' => true, 'size' => 15]
         )->label('Add users ssh key to this env'); ?>
 
         <div class="form-group">
@@ -291,6 +296,32 @@ $updateOneBranchButtons = [];
                 return;
             }
             window.location.href = '/environments/remove-auth?id=<?= $model->id;?>&timeout='+ timeout;
+        });
+
+        $('#comment').on('input', function () {
+            $('#comment-btn').attr('disabled', false);
+        });
+        $('#comment-btn').on('click', function () {
+            let newComment = $('#comment').val(),
+                container = $('#comment-container');
+            container.removeClass('has-error');
+            if (!newComment) {
+                container.addClass('has-error');
+                return;
+            }
+            $.ajax({
+                url: '<?= Url::toRoute(['update-comment', 'id' => $model->id])?>',
+                type: 'POST',
+                data: {"comment": newComment},
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        $('#comment-btn').attr('disabled', true);
+                    } else {
+                        alert(data.message ? data.message : 'unknown error');
+                    }
+                }
+            });
         });
     });
 </script>
