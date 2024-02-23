@@ -216,7 +216,7 @@ $updateOneBranchButtons = [];
                         return null;
                     }
 
-                    return Html::a('Go', Url::toRoute(['update-database', 'id' => $env->id]), ['class' => 'btn btn-info']);
+                    return Html::a('Go', Url::toRoute(['update-database', 'id' => $env->id]), ['class' => 'btn btn-info', 'id' => 'reload-db']);
                 },
             ],
         ],
@@ -266,6 +266,7 @@ $updateOneBranchButtons = [];
 
 <script>
     document.addEventListener('DOMContentLoaded', function(){
+
         $('#update').on('click', function (){
             $('#repo-branches').slideToggle();
         });
@@ -323,5 +324,11 @@ $updateOneBranchButtons = [];
                 }
             });
         });
+        $('#reload-db').on('click', function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure to reload DB?')) {
+                window.location = $(this).attr('href');
+            }
+        })
     });
 </script>
