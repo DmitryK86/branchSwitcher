@@ -246,7 +246,7 @@ class EnvironmentsController extends Controller
         $env = $this->findModel($id);
         try {
             $this->envService->updateDB($env);
-            Yii::$app->session->setFlash('success', 'Env DB successfully updated');
+            Yii::$app->session->setFlash('success', 'Env DB started to update');
         } catch (\Throwable $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
