@@ -225,6 +225,7 @@ class EnvService
             throw new \Exception("Can't update env in not ready status");
         }
 
+        $env->setInProgress();
         $this->executeCommand($this->commandBuilder->forUpdateDB($env));
     }
 
