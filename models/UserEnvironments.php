@@ -26,6 +26,7 @@ use yii\db\ActiveRecord;
  * @property array $added_users_keys
  * @property string $basic_auth_removed_till
  * @property bool $is_persist
+ * @property bool $is_run_autotest
  *
  * @property Project $project
  * @property User $user
@@ -90,6 +91,8 @@ class UserEnvironments extends ActiveRecord
             [['basic_auth_removed_till'], 'safe'],
 
             [['is_persist'], 'boolean'],
+
+            [['is_run_autotest'], 'boolean'],
         ];
     }
 
@@ -124,6 +127,7 @@ class UserEnvironments extends ActiveRecord
             'related_services_id' => 'Related services',
             'basic_auth_removed_till' => 'Basic auth removed till',
             'is_persist' => 'Is persist',
+            'is_run_autotest' => 'Run autotests',
         ];
     }
 

@@ -9,6 +9,7 @@ use app\helpers\LogHelper;
 use yii\helpers\ArrayHelper;
 use app\models\User;
 use app\helpers\EnvUrlBuilder;
+use app\helpers\YesNoHelper;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\UserEnvironments */
@@ -217,6 +218,13 @@ $updateOneBranchButtons = [];
                     }
 
                     return Html::a('Go', Url::toRoute(['update-database', 'id' => $env->id]), ['class' => 'btn btn-info', 'id' => 'reload-db']);
+                },
+            ],
+            [
+                'format' => 'raw',
+                'label' => 'Run autotest',
+                'value' => function(UserEnvironments $env){
+                    return YesNoHelper::getValue($env->is_run_autotest);
                 },
             ],
         ],

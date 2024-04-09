@@ -46,6 +46,14 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                     'logVars' => [],
+                    'except' => ['autotest', 'autotest.*']
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                    'categories' => ['autotest', 'autotest.*'],
+                    'logVars' => [],
+                    'logFile' => '@app/runtime/logs/run_autotest.log'
                 ],
             ],
         ],

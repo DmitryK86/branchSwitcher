@@ -35,4 +35,9 @@ return [
     'isMaintenanceMode' => false,
     'pathToLogs' => '',
     'pathToStoreConfigs' => '',
+    'autotest' => [
+        'url' => '',
+        'login' => '',
+        'password' => '',
+    ],
 ];
