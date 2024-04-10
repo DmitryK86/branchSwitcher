@@ -52,9 +52,9 @@ class CallbackController extends Controller
         $env->environment_code = $code;
         $env->ip = $ip;
 
-        //if (!$env->save(true, ['status', 'environment_code', 'ip', 'updated_at'])) {
-        //    throw new \Exception("Env saving error. Details: " . print_r($env->getErrorSummary(true), true));
-        //}
+        if (!$env->save(true, ['status', 'environment_code', 'ip', 'updated_at'])) {
+            throw new \Exception("Env saving error. Details: " . print_r($env->getErrorSummary(true), true));
+        }
 
         $event = new EnvCreatedEvent($env);
         \Yii::$app->trigger(EnvCreatedEvent::NAME, $event);
