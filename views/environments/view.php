@@ -58,6 +58,9 @@ $updateOneBranchButtons = [];
             </div>
         <?php $updateOneBranchButtons[] = Html::button("Update {$branchData->repository->code}", ['id' => $branchData->repository->code, 'class' => 'btn btn-success one-branch-update']);?>
         <?php endforeach;?>
+        <?php if (!$model->project->isServiceProject()): ?>
+            <?= Html::checkbox('UserEnvironments[is_run_autotest]', false, ['label' => 'Run autotests', 'id' => 'run-test']);?>
+        <?php endif; ?>
         <div class="form-group">
             <?php
             if (count($updateOneBranchButtons) > 1): ?>
@@ -226,6 +229,7 @@ $updateOneBranchButtons = [];
                 'value' => function(UserEnvironments $env){
                     return YesNoHelper::getValue($env->is_run_autotest);
                 },
+                'visible' => !$model->project->isServiceProject(),
             ],
         ],
     ]) ?>
@@ -286,8 +290,12 @@ $updateOneBranchButtons = [];
         $('.one-branch-update').on('click', function () {
             let repoCode = $(this).attr('id');
             let branch = $('*[data-repository="'+repoCode+'"]').val();
+            let href = '/environments/update-one?id=<?= $model->id;?>&repositoryCode='+repoCode+'&branchName='+branch;
+            if ($('#run-test').is(':checked')) {
+                href += '&runAutotest=1'
+            }
 
-            window.location.href = '/environments/update-one?id=<?= $model->id;?>&repositoryCode='+repoCode+'&branchName='+branch;
+            window.location.href = href;
         });
 
         $('#basic-auth-remove-minutes').on('input', function () {

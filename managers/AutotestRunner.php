@@ -47,6 +47,6 @@ class AutotestRunner
         }
 
         $statusCode = isset($response) ? $response->getStatusCode() : 0;
-        $logger->log("Autotest is running. Response status: {$statusCode}", Logger::LEVEL_WARNING, 'autotest.run');
+        $logger->log("Autotest for env ID#{$env->id} is running. Response status: {$statusCode}", Logger::LEVEL_WARNING, 'autotest.run');
     }
 }

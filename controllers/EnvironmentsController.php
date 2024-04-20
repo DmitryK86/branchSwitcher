@@ -153,6 +153,7 @@ class EnvironmentsController extends Controller
     public function actionUpdate(int $id): Response
     {
         $env = $this->findModel($id);
+        $env->is_run_autotest = false;
         if ($env->load(Yii::$app->request->post())) {
             try {
                 $this->envService->update($env);
@@ -165,11 +166,11 @@ class EnvironmentsController extends Controller
         return $this->redirect(['view', 'id' => $env->id]);
     }
 
-    public function actionUpdateOne(int $id, string $repositoryCode, string $branchName): Response
+    public function actionUpdateOne(int $id, string $repositoryCode, string $branchName, bool $runAutotest = false): Response
     {
         $env = $this->findModel($id);
         try {
-            $this->envService->updateOne($env, $repositoryCode, $branchName);
+            $this->envService->updateOne($env, $repositoryCode, $branchName, $runAutotest);
         } catch (\Throwable $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);

@@ -126,7 +126,12 @@ class EnvService
         $this->executeCommand($command);
     }
 
-    public function updateOne(UserEnvironments $userEnvironment, string $repositoryCode, string $branchName)
+    public function updateOne(
+        UserEnvironments $userEnvironment,
+        string $repositoryCode,
+        string $branchName,
+        bool $runAutotest
+    )
     {
         $repository = Repository::findOne(['code' => $repositoryCode]);
         if (!$repository) {
@@ -159,6 +164,7 @@ class EnvService
             $branch->saveOrFail();
 
             $userEnvironment->status = UserEnvironments::STATUS_IN_PROGRESS;
+            $userEnvironment->is_run_autotest = $runAutotest;
             $userEnvironment->branchesData[$repositoryCode] = $branchName;
             $userEnvironment->saveOrFail();
 

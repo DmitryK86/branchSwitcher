@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use app\components\events\EnvCreatedEvent;
+use app\components\events\EnvUpdatedEvent;
 use app\exceptions\EnvironmentNotFoundException;
 use app\exceptions\IllegalEnvStateException;
-use app\managers\eventHandlers\EnvCreatedHandler;
+use app\managers\eventHandlers\EnvChangedHandler;
 use app\models\UserEnvironments;
 use yii\web\Controller;
 
@@ -15,7 +16,8 @@ class CallbackController extends Controller
 {
     public function init()
     {
-        \Yii::$app->on(EnvCreatedEvent::NAME, [new EnvCreatedHandler(), 'onEnvCreated']);
+        \Yii::$app->on(EnvCreatedEvent::NAME, [new EnvChangedHandler(), 'onEnvChanged']);
+        \Yii::$app->on(EnvUpdatedEvent::NAME, [new EnvChangedHandler(), 'onEnvChanged']);
 
         parent::init();
     }
@@ -36,6 +38,9 @@ class CallbackController extends Controller
         if (!$env->save(true, ['status', 'environment_code', 'updated_at'])) {
             throw new \Exception("Env saving error. Details: " . print_r($env->getErrorSummary(true), true));
         }
+
+        $event = new EnvUpdatedEvent($env);
+        \Yii::$app->trigger(EnvUpdatedEvent::NAME, $event);
     }
 
     public function actionCreate(int $envId, string $code, string $ip, string $status)

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace app\managers\eventHandlers;
 
-use app\components\events\EnvCreatedEvent;
+use app\components\events\EnvEvent;
 use app\managers\AutotestRunner;
 use yii\base\Component;
 
-class EnvCreatedHandler extends Component
+class EnvChangedHandler extends Component
 {
-    public function onEnvCreated(EnvCreatedEvent $event): void
+    public function onEnvChanged(EnvEvent $event): void
     {
         $env = $event->getEnv();
         if ($env->is_run_autotest) {
