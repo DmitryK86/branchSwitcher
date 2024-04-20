@@ -66,6 +66,7 @@ $config = [
                 'login' => 'site/login',
                 'callback/result/create/<envId:\d+>/<code:\w+>/<ip:[\d\.]+>/<status:\w+>' => 'callback/create',
                 'callback/result/build/<envId:\d+>/<code:\w+>/<status:\w+>' => 'callback/index',
+                'api/env/info' => 'api/info',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
