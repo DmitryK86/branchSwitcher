@@ -13,9 +13,13 @@ class EnvChangedHandler extends Component
     public function onEnvChanged(EnvEvent $event): void
     {
         $env = $event->getEnv();
-        if ($env->is_run_autotest) {
-            $runner = new AutotestRunner();
-            $runner->run($env);
+        if (!$env->isReady()) {
+            return;
         }
+        if (!$env->is_run_autotest) {
+            return;
+        }
+        $runner = new AutotestRunner();
+        $runner->run($env);
     }
 }

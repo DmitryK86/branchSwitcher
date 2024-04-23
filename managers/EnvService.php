@@ -230,6 +230,9 @@ class EnvService
         if (!$env->isReady()) {
             throw new \Exception("Can't update env in not ready status");
         }
+        // TODO костыль, не запускать автотесты после релоада БД
+        $env->is_run_autotest = false;
+        $env->saveOrFail(false, ['is_run_autotest']);
 
         $env->setInProgress();
         $this->executeCommand($this->commandBuilder->forUpdateDB($env));
