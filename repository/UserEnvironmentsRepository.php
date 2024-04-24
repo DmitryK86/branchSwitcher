@@ -33,7 +33,7 @@ class UserEnvironmentsRepository
         return UserEnvironments::find()
             ->where("
             environment_code IS NOT NULL 
-            AND status = 'ready' 
+            AND status NOT IN ('deleted', 'in_progress') 
             AND updated_at <= NOW() - interval '{$expDaysInterval} days' 
             AND is_persist = FALSE"
             )->all();
