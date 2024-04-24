@@ -18,7 +18,7 @@ class UserEnvironmentsRepository
             ->where("
             user_id = :userId 
             AND environment_code IS NOT NULL 
-            AND status = 'ready' 
+            AND status NOT IN ('deleted', 'in_progress') 
             AND is_persist = FALSE 
             AND updated_at <= NOW() - interval '{$expDaysInterval} days'"
             )->params([':userId' => $user->id])
