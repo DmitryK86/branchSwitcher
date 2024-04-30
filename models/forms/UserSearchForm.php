@@ -67,7 +67,8 @@ class UserSearchForm extends User
         $query->andFilterWhere(['ilike', 'role', $this->role])
             ->andFilterWhere(['ilike', 'username', $this->username])
             ->andFilterWhere(['ilike', 'email', $this->email])
-            ->andFilterWhere(['group_id' => $this->group_id]);
+            ->andFilterWhere(['group_id' => $this->group_id])
+            ->orderBy('id DESC');
 
         return $dataProvider;
     }

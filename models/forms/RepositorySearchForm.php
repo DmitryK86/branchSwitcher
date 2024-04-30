@@ -64,7 +64,8 @@ class RepositorySearchForm extends Repository
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name])
-            ->andFilterWhere(['ilike', 'code', $this->code]);
+            ->andFilterWhere(['ilike', 'code', $this->code])
+            ->orderBy('id DESC');
 
         return $dataProvider;
     }

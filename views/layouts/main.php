@@ -47,6 +47,7 @@ $rootVisibility = !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot
             ['label' => 'Projects', 'url' => ['/project/index'], 'visible' => $rootVisibility],
             ['label' => 'Repository', 'url' => ['/repository/index'], 'visible' => $rootVisibility],
             ['label' => 'Groups', 'url' => ['/group/index'], 'visible' => $rootVisibility],
+            ['label' => 'Command templates', 'url' => ['/command-template/index'], 'visible' => $rootVisibility],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

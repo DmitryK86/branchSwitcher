@@ -18,6 +18,7 @@ use yii\db\ArrayExpression;
  *
  * @property UserEnvironments[] $userEnvironments
  * @property Repository[] $repositories
+ * @property CommandTemplate[] $commandTemplates
  */
 class Project extends \yii\db\ActiveRecord
 {
@@ -77,6 +78,22 @@ class Project extends \yii\db\ActiveRecord
     public function getRepositories(): ActiveQuery
     {
         return $this->hasMany(Repository::className(), ['id' => 'repositories_id']);
+    }
+
+    public function getCommandTemplates(): ActiveQuery
+    {
+        return $this->hasMany(CommandTemplate::className(), ['project_id' => 'id']);
+    }
+
+    public function getCustomCommandTemplate(string $action): ?string
+    {
+        $filtered = array_filter($this->commandTemplates, function (CommandTemplate $template) use ($action) {
+            return $template->action == $action;
+        });
+
+        $template = reset($filtered);
+
+        return $template ? $template->template : null;
     }
 
     public function getRepositoriesIdsArray(): array

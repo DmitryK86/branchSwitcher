@@ -4,21 +4,21 @@ namespace app\models\forms;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Project;
+use app\models\CommandTemplate;
 
 /**
- * ProjectSearchForm represents the model behind the search form of `app\models\Project`.
+ * CommandTemplateSearchForm represents the model behind the search form of `app\models\CommandTemplate`.
  */
-class ProjectSearchForm extends Project
+class CommandTemplateSearchForm extends CommandTemplate
 {
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['id'], 'integer'],
-            [['name', 'code'], 'safe'],
+            [['id', 'project_id'], 'integer'],
+            [['name', 'action'], 'safe'],
             [['enabled'], 'boolean'],
         ];
     }
@@ -41,7 +41,7 @@ class ProjectSearchForm extends Project
      */
     public function search($params)
     {
-        $query = Project::find();
+        $query = CommandTemplate::find();
 
         // add conditions that should always apply here
 
@@ -64,7 +64,7 @@ class ProjectSearchForm extends Project
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name])
-            ->andFilterWhere(['ilike', 'code', $this->code])
+            ->andFilterWhere(['ilike', 'template', $this->template])
             ->orderBy('id DESC');
 
         return $dataProvider;
