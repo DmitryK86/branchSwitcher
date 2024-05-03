@@ -93,7 +93,7 @@ class Project extends \yii\db\ActiveRecord
 
         $template = reset($filtered);
 
-        return $template ? $template->template : null;
+        return $template && $template->enabled ? $template->template : null;
     }
 
     public function getRepositoriesIdsArray(): array
