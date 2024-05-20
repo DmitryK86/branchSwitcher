@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use app\models\User;
+use app\models\UserEnvironmentBranches;
 use app\models\UserEnvironments;
 use yii\filters\AccessControl;
 use yii\rest\Controller;
@@ -62,6 +63,12 @@ class ApiController extends Controller
             $response[$env->environment_code] = [
                 'project_name' => $env->project->code,
                 'updated_at' => $env->updated_at,
+                'branches' => array_map(function (UserEnvironmentBranches $branch) {
+                    return [
+                        'name' => $branch->branch,
+                        'code' => $branch->repository->code,
+                    ];
+                }, $env->branches),
             ];
         }
 
