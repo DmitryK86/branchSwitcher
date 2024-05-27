@@ -134,7 +134,7 @@ class EnvironmentsController extends Controller
                 continue;
             }
             $result[$repository->code] = [
-                'defaultBranch' => $repository->default_branch_name,
+                'defaultBranch' => $project->getBranchNameForRepository($repository) ?: $repository->default_branch_name,
                 'provider' => $repository->version_control_provider,
             ];
         }

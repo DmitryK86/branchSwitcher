@@ -19,6 +19,7 @@ use yii\db\ArrayExpression;
  * @property UserEnvironments[] $userEnvironments
  * @property Repository[] $repositories
  * @property CommandTemplate[] $commandTemplates
+ * @property ProdBranch[] $prodBranches
  */
 class Project extends \yii\db\ActiveRecord
 {
@@ -106,5 +107,15 @@ class Project extends \yii\db\ActiveRecord
     public function isServiceProject(): bool
     {
         return self::TYPE_SERVICE == $this->type;
+    }
+
+    public function getProdBranches(): ActiveQuery
+    {
+        return $this->hasMany(ProdBranch::className(), ['project_id' => 'id'])->indexBy('repository_id');
+    }
+
+    public function getBranchNameForRepository(Repository $repository): string
+    {
+        return $this->prodBranches[$repository->id]->branch_name ?? '';
     }
 }

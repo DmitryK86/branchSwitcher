@@ -39,6 +39,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     const ROLE_ROOT = 'root';
     const ROLE_USER = 'user';
+    const ROLE_RELEASE_MANAGER = 'release_manager';
 
     const ALIAS_DEVOPS = 'devops';
 
@@ -63,6 +64,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             self::ROLE_USER => 'User',
             self::ROLE_ROOT => 'Root',
+            self::ROLE_RELEASE_MANAGER => 'Release Manager',
         ];
     }
 
@@ -237,9 +239,19 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return false;
     }
 
+    public function isUser(): bool
+    {
+        return self::ROLE_USER === $this->role;
+    }
+
     public function isRoot(): bool
     {
         return $this->role == self::ROLE_ROOT;
+    }
+
+    public function isReleaseManager(): bool
+    {
+        return self::ROLE_RELEASE_MANAGER === $this->role;
     }
 
     public function getProjects(): array
