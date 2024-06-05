@@ -78,6 +78,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'value' => function (UserEnvironments $data) {
                 $result = [];
                 foreach ($data->branches as $branch) {
+                    if (!$branch->repository->enabled) {
+                        continue;
+                    }
                     $result[] = "{$branch->repository->name}: <code>{$branch->branch}</code>";
                 }
                 return implode('<br>', $result);

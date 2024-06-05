@@ -43,6 +43,9 @@ $updateOneBranchButtons = [];
     <div id="repo-branches" style="display: none">
         <?php $form = ActiveForm::begin(['id' => 'create-form', 'validateOnSubmit' => false, 'action' => [Url::toRoute(['update', 'id' => $model->id])]]); ?>
         <?php foreach ($model->branches as $branchData): ?>
+            <?php if (!$branchData->repository->enabled) {
+                continue;
+            } ?>
             <?php $repositoryCode = $branchData->repository->code;?>
             <div class="form-group form-group-custom field-<?= $repositoryCode; ?>_repository">
                 <label class="control-label" for="<?= $repositoryCode; ?>_repository">Ветка для <?= $repositoryCode; ?></label>
