@@ -15,7 +15,7 @@ class EnvExpirationInformer
 {
     private const EXPIRATION_INFO_COOKIE_NAME = 'expiration_info';
     private const EXPIRATION_INFO_COOKIE_TTL = 3600;
-    private const ALMOST_EXPIRED_ENV_DAYS = 20;
+    private const ALMOST_EXPIRED_ENV_DAYS = 6;
 
     private UserEnvironmentsRepository $envRepository;
 
@@ -37,7 +37,7 @@ class EnvExpirationInformer
 
         $result = [];
         foreach ($envs as $env) {
-            $expirationDate = (new \DateTime($env->updated_at))->modify(sprintf('+%s days', UserEnvironments::EXPIRED_ENV_DAYS));
+            $expirationDate = (new \DateTime($env->updated_at))->modify(sprintf('+%s days', 10));
             $diff = $expirationDate->diff(new \DateTime());
             $removed = ($diff->invert == 0 || $diff->days < 1) ? 'tomorrow' : ("after {$expirationDate->format('d.m')}");
             $result[] = "Env '{$env->environment_code}' is almost expired and will be removed {$removed}";

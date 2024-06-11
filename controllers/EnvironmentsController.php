@@ -63,7 +63,7 @@ class EnvironmentsController extends Controller
         /** @var User $user */
         $user = Yii::$app->getUser()->getIdentity();
         if ($info = $this->informer->getExpirationInfo($user, Yii::$app->getRequest(), Yii::$app->getResponse())) {
-            Yii::$app->getSession()->setFlash('info', implode('<br>', $info));
+            Yii::$app->getSession()->setFlash('error', implode('<br>', $info));
         }
 
         $searchModel = new UserEnvironmentsSearchForm($user);
