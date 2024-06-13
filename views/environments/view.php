@@ -62,7 +62,7 @@ $updateOneBranchButtons = [];
         <?php $updateOneBranchButtons[] = Html::button("Update {$branchData->repository->code}", ['id' => $branchData->repository->code, 'class' => 'btn btn-success one-branch-update']);?>
         <?php endforeach;?>
         <?php if (!$model->project->isServiceProject()): ?>
-            <?= Html::checkbox('UserEnvironments[is_run_autotest]', false, ['label' => 'Run autotests', 'id' => 'run-test', 'checked' => true]);?>
+            <?= Html::checkbox('UserEnvironments[is_run_autotest]', false, ['label' => 'Run autotests', 'id' => 'run-test', 'checked' => Yii::$app->getUser()->getIdentity()->isQA()]);?>
         <?php endif; ?>
         <div class="form-group">
             <?php
@@ -173,6 +173,10 @@ $updateOneBranchButtons = [];
                     foreach ($env->relatedServices as $serviceEnv) {
                         $url = EnvUrlBuilder::build($serviceEnv, EnvUrlBuilder::TYPE_ADMIN);
                         $result[] = Html::a($serviceEnv->project->name . " ({$url})", $url, ['target' => '_blank']);
+                    }
+                    foreach ($env->foreignRelatedServices as $foreignServiceEnv) {
+                        $url = "https://{$foreignServiceEnv->params['domain']}";
+                        $result[] = Html::a($foreignServiceEnv->params['type'] . " ({$url})", $url, ['target' => '_blank']);
                     }
                     return implode('<br>', $result);
                 },

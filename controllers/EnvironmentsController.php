@@ -6,6 +6,7 @@ use app\components\resolvers\branch\BranchResolverFactory;
 use app\managers\EnvChecker;
 use app\managers\EnvExpirationInformer;
 use app\managers\EnvService;
+use app\managers\ForeignEnvsManager;
 use app\models\Project;
 use app\models\Repository;
 use app\models\User;
@@ -95,7 +96,7 @@ class EnvironmentsController extends Controller
             } catch (\Throwable $e) {
                 $model->project_id = null;
                 $model->addError('project_id', $e->getMessage());
-                Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR);
+                Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
             }
         }
 

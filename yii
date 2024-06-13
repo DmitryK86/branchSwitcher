@@ -8,6 +8,11 @@
  * @license http://www.yiiframework.com/license/
  */
 
+$localEnvPath = __DIR__ . '/config/local/env.php';
+if (file_exists($localEnvPath)){
+    require $localEnvPath;
+}
+
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
@@ -15,6 +20,11 @@ require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
 $config = require __DIR__ . '/config/console.php';
+$localConfigPath = __DIR__ . '/config/local/web.php';
+if (file_exists($localConfigPath)){
+    $configLocal = require $localConfigPath;
+    $config = \yii\helpers\ArrayHelper::merge($config, $configLocal);
+}
 
 $application = new yii\console\Application($config);
 $exitCode = $application->run();

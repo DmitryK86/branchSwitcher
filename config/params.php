@@ -41,4 +41,9 @@ return [
         'password' => '',
     ],
     'publicApiKey' => 'some-key',
+    'foreignEnvs' => [
+        'url' => 'https://kube01-ams5.ams.infng.net:8443/api/v1/namespaces',
+        'limit' => 500,
+        'token' => 'eyJhbGciOiJSUzI1NiIsImtpZCI6Im85LXBFTEVfTy1EYVlHdXE0NDdyR2NYWk92WGpiamRoRFRzb2k0N29UeDAifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiXSwiZXhwIjoxNzQ4OTAzMjg2LCJpYXQiOjE3MTczNjcyODYsImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsInNlcnZpY2VhY2NvdW50Ijp7Im5hbWUiOiJuYW1lc3BhY2Utdmlld2VyIiwidWlkIjoiOTc2OWQ1NjYtYzAyYi00NDAxLThmOTctYzc0M2NhZjU5NzlkIn19LCJuYmYiOjE3MTczNjcyODYsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTpuYW1lc3BhY2Utdmlld2VyIn0.WtDW6hzCIfF4rw--AcQXSpnr_JSySAf-IsNYkJRcIq1bhm-op3WvdmPNG1wi0g3_t2zWcbVoQ-NPa4bp4B8ABruBWtMiTGs6xZIAppViCuhLcL8Z1f7T1b7EAVb6LD69-veyI3rXglOzR20VN7XxBxOvK_oUu0uD4BURgTo5hRsQA5c3B0yIt5E14IYSR55N9ehY7dnp1IObkIaHddzBzyAT7TyfZeYKk_52le_E6yxKea0sEoFECg7p_g4JFSpG4w4ZIhk7_j9-7wutmeSqlJ1Uz3As5XEUnca5zHCSr37CGYC994KkyHr98QdvqvcPGzaltD6OWIm1UNFyij7beA',
+    ],
 ];

@@ -33,7 +33,11 @@ use app\models\UserEnvironments;
         }), ['multiple' => true]); ?>
     <?php endif;?>
 
-    <?= $form->field($model, 'is_run_autotest')->checkbox(['checked' => true]);?>
+    <?php if ($availableForeignServices = \app\managers\ForeignEnvsManager::getAvailableServicesForRelate(Yii::$app->getUser()->getId())):?>
+        <?= $form->field($model, 'foreignRelatedServicesNames')->dropDownList($availableForeignServices, ['multiple' => true]); ?>
+    <?php endif;?>
+
+    <?= $form->field($model, 'is_run_autotest')->checkbox(['checked' => Yii::$app->getUser()->getIdentity()->isQA()]);?>
 
     <div class="form-group">
         <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>

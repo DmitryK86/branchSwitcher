@@ -41,8 +41,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     const ROLE_USER = 'user';
     const ROLE_RELEASE_MANAGER = 'release_manager';
 
-    const ALIAS_DEVOPS = 'devops';
-
     public $password;
     public $password_repeat;
 
@@ -261,7 +259,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function isDevops(): bool
     {
-        return $this->getGroupName() == self::ALIAS_DEVOPS;
+        return $this->getGroupName() == 'Devops';
+    }
+
+    public function isQA(): bool
+    {
+        return $this->getGroupName() == 'QA';
     }
 
     public function getGroup(): ActiveQuery

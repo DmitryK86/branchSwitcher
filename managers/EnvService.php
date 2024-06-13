@@ -30,16 +30,18 @@ class EnvService
 
     public function create(UserEnvironments $userEnvironment): void
     {
-        if (!$userEnvironment->validate()) {
-            throw new \Exception(print_r($userEnvironment->getErrorSummary(true), true));
-        }
-
         if (!\Yii::$app->db->getTransaction()) {
             $t = \Yii::$app->db->beginTransaction();
         }
 
         try {
-            $userEnvironment->save();
+            if ($userEnvironment->foreignRelatedServicesNames) {
+                $userEnvironment->foreign_related_services_id = (new ForeignEnvsManager())->createForeignEnv($userEnvironment->user_id, $userEnvironment->foreignRelatedServicesNames);
+            }
+            if (!$userEnvironment->validate()) {
+                throw new \Exception(print_r($userEnvironment->getErrorSummary(true), true));
+            }
+            $userEnvironment->save(false);
             foreach ($userEnvironment->branchesData as $repoCode => $branchName) {
                 $repository = Repository::findOne(['code' => $repoCode]);
                 if (!$repository) {

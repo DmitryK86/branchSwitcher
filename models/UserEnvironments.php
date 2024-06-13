@@ -27,12 +27,14 @@ use yii\db\ActiveRecord;
  * @property string $basic_auth_removed_till
  * @property bool $is_persist
  * @property bool $is_run_autotest
+ * @property array $foreign_related_services_id
  *
  * @property Project $project
  * @property User $user
  * @property UserEnvironmentBranches[] $branches
  * @property UserEnvironments[] $relatedServices
  * @property User[] $addedUsers
+ * @property UserForeignEnv[] $foreignRelatedServices
  */
 class UserEnvironments extends ActiveRecord
 {
@@ -52,6 +54,7 @@ class UserEnvironments extends ActiveRecord
     public const MAX_USER_KEYS_PER_REQUEST = 3;
 
     public array $branchesData = [];
+    public $foreignRelatedServicesNames;
 
     /**
      * {@inheritdoc}
@@ -86,6 +89,8 @@ class UserEnvironments extends ActiveRecord
             [['related_services_id'], 'each', 'rule' => ['integer']],
             [['related_services_id'], 'validateRelatedServices'],
 
+            [['foreign_related_services_id'], 'each', 'rule' => ['integer']],
+
             [['added_users_keys'], 'each', 'rule' => ['integer']],
 
             [['basic_auth_removed_till'], 'safe'],
@@ -93,6 +98,8 @@ class UserEnvironments extends ActiveRecord
             [['is_persist'], 'boolean'],
 
             [['is_run_autotest'], 'boolean'],
+
+            [['foreignRelatedServicesNames'], 'default', 'value' => []],
         ];
     }
 
@@ -128,6 +135,7 @@ class UserEnvironments extends ActiveRecord
             'basic_auth_removed_till' => 'Basic auth removed till',
             'is_persist' => 'Is persist',
             'is_run_autotest' => 'Run autotests',
+            'foreign_services_id' => 'Foreign related services'
         ];
     }
 
@@ -199,6 +207,11 @@ class UserEnvironments extends ActiveRecord
     public function getRelatedServices(): ActiveQuery
     {
         return $this->hasMany(UserEnvironments::className(), ['id' => 'related_services_id']);
+    }
+
+    public function getForeignRelatedServices(): ActiveQuery
+    {
+        return $this->hasMany(UserForeignEnv::className(), ['id' => 'foreign_related_services_id']);
     }
 
     public static function getStatuses(): array
