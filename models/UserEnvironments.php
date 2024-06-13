@@ -47,7 +47,7 @@ class UserEnvironments extends ActiveRecord
 
     public const MAX_REMOVE_AUTH_MINUTES = 60;
 
-    public const EXPIRED_ENV_DAYS = 30;
+    public const EXPIRED_ENV_DAYS = 10;
 
     public const MAX_USER_KEYS_PER_REQUEST = 3;
 

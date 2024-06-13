@@ -37,7 +37,7 @@ class EnvExpirationInformer
 
         $result = [];
         foreach ($envs as $env) {
-            $expirationDate = (new \DateTime($env->updated_at))->modify(sprintf('+%s days', 10));
+            $expirationDate = (new \DateTime($env->updated_at))->modify(sprintf('+%s days', UserEnvironments::EXPIRED_ENV_DAYS));
             $diff = $expirationDate->diff(new \DateTime());
             $removed = ($diff->invert == 0 || $diff->days < 1) ? 'tomorrow' : ("after {$expirationDate->format('d.m')}");
             $result[] = "Env '{$env->environment_code}' is almost expired and will be removed {$removed}";
