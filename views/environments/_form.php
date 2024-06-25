@@ -33,7 +33,7 @@ use app\models\UserEnvironments;
         }), ['multiple' => true]); ?>
     <?php endif;?>
 
-    <?= $form->field($model, 'is_run_autotest')->checkbox();?>
+    <?= $form->field($model, 'is_run_autotest')->checkbox(['checked' => true]);?>
 
     <div class="form-group">
         <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>

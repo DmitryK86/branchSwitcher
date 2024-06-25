@@ -62,7 +62,7 @@ $updateOneBranchButtons = [];
         <?php $updateOneBranchButtons[] = Html::button("Update {$branchData->repository->code}", ['id' => $branchData->repository->code, 'class' => 'btn btn-success one-branch-update']);?>
         <?php endforeach;?>
         <?php if (!$model->project->isServiceProject()): ?>
-            <?= Html::checkbox('UserEnvironments[is_run_autotest]', false, ['label' => 'Run autotests', 'id' => 'run-test']);?>
+            <?= Html::checkbox('UserEnvironments[is_run_autotest]', false, ['label' => 'Run autotests', 'id' => 'run-test', 'checked' => true]);?>
         <?php endif; ?>
         <div class="form-group">
             <?php
