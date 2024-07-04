@@ -43,12 +43,15 @@ $rootVisibility = !Yii::$app->user->isGuest && Yii::$app->user->identity->isRoot
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/environments/index']],
-            ['label' => 'Users', 'url' => ['/user/index'], 'visible' => $rootVisibility],
-            ['label' => 'Groups', 'url' => ['/group/index'], 'visible' => $rootVisibility],
-            ['label' => 'Projects', 'url' => ['/project/index'], 'visible' => $rootVisibility],
-            ['label' => 'Repository', 'url' => ['/repository/index'], 'visible' => $rootVisibility],
+            ['label' => 'Shared envs', 'url' => ['/shared-envs/index']],
             ['label' => 'Prod branches', 'url' => ['/prod-branch/index']],
-            ['label' => 'Command templates', 'url' => ['/command-template/index'], 'visible' => $rootVisibility],
+            ['label' => 'Settings', 'items' => [
+                ['label' => 'Users', 'url' => ['/user/index']],
+                ['label' => 'Groups', 'url' => ['/group/index']],
+                ['label' => 'Projects', 'url' => ['/project/index']],
+                ['label' => 'Repository', 'url' => ['/repository/index']],
+                ['label' => 'Command templates', 'url' => ['/command-template/index']],
+            ], 'visible' => $rootVisibility],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

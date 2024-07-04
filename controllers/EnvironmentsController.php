@@ -164,7 +164,7 @@ class EnvironmentsController extends Controller
             }
         }
 
-        return $this->redirect(['view', 'id' => $env->id]);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionUpdateOne(int $id, string $repositoryCode, string $branchName, bool $runAutotest = false): Response
@@ -177,7 +177,7 @@ class EnvironmentsController extends Controller
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
         }
 
-        return $this->redirect(['view', 'id' => $env->id]);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionUpdateComment(int $id): Response
@@ -192,7 +192,7 @@ class EnvironmentsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    public function actionAddKey(int $envId)
+    public function actionAddKey(int $envId): Response
     {
         $env = $this->findModel($envId);
         $prevIds = $env->getAddedUsersKeys();
@@ -210,7 +210,7 @@ class EnvironmentsController extends Controller
             }
         }
 
-        $this->redirect(['view', 'id' => $env->id]);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionRemoveAuth(int $id, int $timeout): Response
@@ -226,7 +226,7 @@ class EnvironmentsController extends Controller
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
         }
 
-        return $this->redirect(['view', 'id' => $env->id]);
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionReload(int $id): Response
@@ -249,6 +249,20 @@ class EnvironmentsController extends Controller
         try {
             $this->envService->updateDB($env);
             Yii::$app->session->setFlash('warning', 'Env DB update started');
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::getLogger()->log($e, Logger::LEVEL_ERROR);
+        }
+
+        return $this->redirect(['view', 'id' => $env->id]);
+    }
+
+    public function actionShare(int $envId): Response
+    {
+        $env = $this->findModel($envId);
+        $env->load(Yii::$app->request->post());
+        try {
+            $this->envService->shareEnv($env);
         } catch (\Throwable $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
             Yii::getLogger()->log($e, Logger::LEVEL_ERROR);

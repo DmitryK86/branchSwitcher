@@ -35,6 +35,7 @@ use yii\db\ActiveRecord;
  * @property UserEnvironments[] $relatedServices
  * @property User[] $addedUsers
  * @property UserForeignEnv[] $foreignRelatedServices
+ * @property SharedEnv[] $sharedWithUsers
  */
 class UserEnvironments extends ActiveRecord
 {
@@ -45,9 +46,7 @@ class UserEnvironments extends ActiveRecord
     public const STATUS_ERROR = 'error';
     public const STATUS_DELETED = 'deleted';
 
-    public const MAX_ENVS_PER_PROJECT = 1;
-
-    public const MAX_REMOVE_AUTH_MINUTES = 60;
+    public const MAX_REMOVE_AUTH_MINUTES = 180;
 
     public const EXPIRED_ENV_DAYS = 10;
 
@@ -55,6 +54,7 @@ class UserEnvironments extends ActiveRecord
 
     public array $branchesData = [];
     public $foreignRelatedServicesNames;
+    public $renterIds;
 
     /**
      * {@inheritdoc}
@@ -100,6 +100,8 @@ class UserEnvironments extends ActiveRecord
             [['is_run_autotest'], 'boolean'],
 
             [['foreignRelatedServicesNames'], 'default', 'value' => []],
+
+            [['renterIds'], 'safe'],
         ];
     }
 
@@ -202,6 +204,11 @@ class UserEnvironments extends ActiveRecord
     public function getAddedUsers(): ActiveQuery
     {
         return $this->hasMany(User::className(), ['id' => 'added_users_keys'])->andWhere(['status' => User::STATUS_ACTIVE])->orderBy('username');
+    }
+
+    public function getSharedWithUsers(): ActiveQuery
+    {
+        return $this->hasMany(SharedEnv::className(), ['owner_id' => 'user_id'])->andWhere(['environment_id' => $this->id]);
     }
 
     public function getRelatedServices(): ActiveQuery

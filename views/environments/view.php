@@ -193,6 +193,17 @@ $updateOneBranchButtons = [];
                 },
             ],
             [
+                'format' => 'html',
+                'label' => 'Shared with users',
+                'value' => function(UserEnvironments $env){
+                    $result = [];
+                    foreach ($env->sharedWithUsers as $sharedEnv) {
+                        $result[] = $sharedEnv->renter->username;
+                    }
+                    return implode('<br>', $result);
+                },
+            ],
+            [
                 'format' => 'raw',
                 'label' => 'Remove basic auth',
                 'value' => function(UserEnvironments $env){
@@ -254,13 +265,28 @@ $updateOneBranchButtons = [];
         $form = ActiveForm::begin(['id' => 'create-form', 'validateOnSubmit' => false, 'action' => [Url::toRoute(['environments/add-key', 'envId' => $model->id])]]); ?>
 
         <?= $form->field($model, 'added_users_keys')->dropDownList(
-            ArrayHelper::map(User::find()->where("coalesce(ssh_key, '') <> ''")->andWhere(['not in', 'id', $model->getAddedUsersKeys()])->orderBy('username')->all(), 'id', 'username'),
+            ArrayHelper::map(User::find()->where("coalesce(ssh_key, '') <> '' AND status = :status", [':status' => User::STATUS_ACTIVE])->andWhere(['not in', 'id', $model->getAddedUsersKeys()])->orderBy('username')->all(), 'id', 'username'),
             ['multiple' => true, 'size' => 15]
         )->label('Add users ssh key to this env'); ?>
 
         <div class="form-group">
             <?= Html::submitButton('Add', ['class' => 'btn btn-info']) ?>
         </div>
+
+        <?php
+        ActiveForm::end(); ?>
+
+        <?php
+        $form = ActiveForm::begin(['id' => 'share-form', 'validateOnSubmit' => false, 'action' => [Url::toRoute(['environments/share', 'envId' => $model->id])]]); ?>
+
+        <?= $form->field($model, 'renterIds')->dropDownList(
+            ArrayHelper::map(User::find()->where("status = :status", [':status' => User::STATUS_ACTIVE])->orderBy('username')->all(), 'id', 'username'),
+            ['multiple' => true, 'size' => 15]
+        )->label('Share env'); ?>
+
+            <div class="form-group">
+                <?= Html::submitButton('Share', ['class' => 'btn btn-info']) ?>
+            </div>
 
         <?php
         ActiveForm::end(); ?>

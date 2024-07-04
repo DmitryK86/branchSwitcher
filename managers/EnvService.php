@@ -8,6 +8,7 @@ use app\components\resolvers\branch\BranchResolverFactory;
 use app\exceptions\BranchResolveException;
 use app\exceptions\RepositoryNotFoundException;
 use app\models\Repository;
+use app\models\SharedEnv;
 use app\models\User;
 use app\models\UserEnvironmentBranches;
 use app\models\UserEnvironments;
@@ -238,6 +239,23 @@ class EnvService
 
         $env->setInProgress();
         $this->executeCommand($this->commandBuilder->forUpdateDB($env));
+    }
+
+    public function shareEnv(UserEnvironments $env): void
+    {
+        if (!$env->renterIds) {
+            return;
+        }
+        foreach ($env->renterIds as $renterId) {
+            $sharedEnv = new SharedEnv();
+            $sharedEnv->owner_id = $env->user_id;
+            $sharedEnv->renter_id = $renterId;
+            $sharedEnv->environment_id = $env->id;
+
+            if (!$sharedEnv->save()) {
+                throw new \Exception("Failed to share env ID#{$env->id}. Details: " . print_r($sharedEnv->getErrorSummary(true), true));
+            }
+        }
     }
 
     private function executeCommand(string $command)
