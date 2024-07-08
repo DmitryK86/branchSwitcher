@@ -309,4 +309,11 @@ class UserEnvironments extends ActiveRecord
     {
         return $this->added_users_keys instanceof ArrayExpression ? $this->added_users_keys->getValue() : [];
     }
+
+    public function lockForUpdate(): self
+    {
+        $sql = "SELECT * FROM user_environments WHERE id = :id FOR NO KEY UPDATE";
+
+        return self::findBySql($sql, [':id' => $this->id])->one();
+    }
 }

@@ -88,8 +88,6 @@ class EnvService
         }
 
         try {
-            $userEnvironment->status = UserEnvironments::STATUS_IN_PROGRESS;
-            $userEnvironment->save();
             foreach ($userEnvironment->branchesData as $repoCode => $branchName) {
                 $repository = Repository::findOne(['code' => $repoCode]);
                 if (!$repository) {
@@ -110,10 +108,14 @@ class EnvService
                 $branch->user_environment_id = $userEnvironment->id;
                 $branch->repository_id = $repository->id;
                 $branch->branch = $branchName;
-                if (!$branch->save()) {
-                    throw new \Exception("Failed to save branch data. Details: " . print_r($branch->getErrorSummary(true), true));
-                }
+                $branch->saveOrFail();
             }
+
+            $userEnvironment = $userEnvironment->lockForUpdate();
+            if ($userEnvironment->isInProgress()) {
+                throw new \Exception("Env is already in progress");
+            }
+            $userEnvironment->setInProgress();
 
             if (isset($t)) {
                 $t->commit();
@@ -157,6 +159,10 @@ class EnvService
         }
 
         try {
+            $userEnvironment = $userEnvironment->lockForUpdate();
+            if ($userEnvironment->isInProgress()) {
+                throw new \Exception("Env is already in progress");
+            }
             $branchData->active = false;
             $branchData->saveOrFail();
 
