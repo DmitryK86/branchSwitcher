@@ -46,7 +46,7 @@ class ApiController extends Controller
         ];
     }
 
-    public function actionInfo(string $username)
+    public function actionUserInfo(string $username)
     {
         $user = User::findOne(['username' => $username]);
         if (!$user) {
@@ -69,6 +69,35 @@ class ApiController extends Controller
                         'code' => $branch->repository->code,
                     ];
                 }, $env->branches),
+            ];
+        }
+
+        return $response;
+    }
+
+    public function actionEnvInfo(string $hashes)
+    {
+        $hashes = explode(',', $hashes);
+        $envs = UserEnvironments::findAll(['environment_code' => $hashes]);
+        if (!$envs) {
+            throw new HttpException(499, "Envs not found");
+        }
+
+        $response = [];
+        foreach ($envs as $env) {
+            $response[] = [
+                'hash' => $env->environment_code,
+                'project_name' => $env->project->code,
+                'updated_at' => $env->updated_at,
+                'created_at' => $env->created_at,
+                'branches' => array_map(function (UserEnvironmentBranches $branch) {
+                    return [
+                        'name' => $branch->branch,
+                        'code' => $branch->repository->code,
+                    ];
+                }, $env->branches),
+                'username' => $env->user->username,
+                'status' => $env->status,
             ];
         }
 
